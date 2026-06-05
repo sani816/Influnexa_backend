@@ -1,5 +1,5 @@
 import express from "express";
-import Creator from "../models/creator.js";
+import Creator from "../models/Creator.js";
 import multer from "multer";
 
 import {
