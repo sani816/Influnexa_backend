@@ -1,4 +1,4 @@
-import Creator from "../models/creator.js";
+import Creator from "../models/Creator.js";
 import { io } from "../server.js";
 import Notification from "../models/Notification.js";
 
