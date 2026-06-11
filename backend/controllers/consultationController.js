@@ -23,25 +23,25 @@ export const bookConsultation = async (req, res) => {
         },
       });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    // await transporter.sendMail({
+    //   from: process.env.EMAIL_USER,
 
-      to: process.env.EMAIL_USER,
+    //   to: process.env.EMAIL_USER,
 
-      subject: "New Consultation Booking",
+    //   subject: "New Consultation Booking",
 
-      html: `
-        <h2>New Consultation Request</h2>
+    //   html: `
+    //     <h2>New Consultation Request</h2>
 
-        <p><b>Name:</b> ${name}</p>
+    //     <p><b>Name:</b> ${name}</p>
 
-        <p><b>Email:</b> ${email}</p>
+    //     <p><b>Email:</b> ${email}</p>
 
-        <p><b>Date:</b> ${date}</p>
+    //     <p><b>Date:</b> ${date}</p>
 
-        <p><b>Time:</b> ${time}</p>
-      `,
-    });
+    //     <p><b>Time:</b> ${time}</p>
+    //   `,
+    // });
 
     res.status(201).json({
       success: true,
