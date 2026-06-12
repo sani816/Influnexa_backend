@@ -50,6 +50,8 @@ app.use(cors());
 app.use(express.json());
 
 // ROUTES (IMPORTANT FIX HERE)
+
+
 app.use("/api/consultation", consultationRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/creator", creatorRoutes);
@@ -65,7 +67,7 @@ app.use(
 );
 
 // SERVER START
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
