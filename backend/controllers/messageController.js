@@ -1,4 +1,4 @@
-import message from "../models/message.js";
+import Message from "../models/Message.js";
 // import nodemailer from "nodemailer";
 
 export const sendMessage = async (req, res) => {
@@ -6,7 +6,7 @@ export const sendMessage = async (req, res) => {
     const { name, email, company, budget, message } = req.body;
 
      const message=
-          await message.create({
+          await Message.create({
             name,
             email,
             company,
@@ -36,17 +36,18 @@ export const sendMessage = async (req, res) => {
     //   `,
     // });
 
-    res.status(200).json({
+    res.status(201).json({
       success: true,
-      message: "Message sent successfully",
+      message:
+        "message sent successfully",
+      message,
     });
-
   } catch (error) {
-    console.error("MESSAGE ERROR:", error);
+  console.error("BOOKING ERROR:", error);
 
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  res.status(500).json({
+    success: false,
+    message: error.message,
+  });
   }
 };
