@@ -1,3 +1,4 @@
+import message from "../models/message";
 import nodemailer from "nodemailer";
 
 export const sendMessage = async (req, res) => {
