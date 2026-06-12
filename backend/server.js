@@ -12,6 +12,7 @@ import messageRoutes from "./routes/messageRoutes.js";
 import creatorRoutes from "./routes/creatorRoutes.js";
 import brandRoutes from "./routes/brandRoutes.js";
 import notificationRoutes from "./routes/notifcationRoute.js";
+import bookingRoutes from "./routes/bookingRoutes.js"
 
 import connectDB from "./config/db.js";
 
@@ -28,7 +29,8 @@ const server = http.createServer(app);
 // SOCKET SETUP
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin:[ "http://localhost:5173",
+    "https://influnexa-frontend.vercel.app",],
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
@@ -65,6 +67,7 @@ app.use(
   "/api/notifications",
   notificationRoutes
 );
+app.use("/api/bookings", bookingRoutes);
 
 // SERVER START
 const PORT = process.env.PORT || 10000;
