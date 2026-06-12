@@ -3,41 +3,42 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 import dotenv from "dotenv";
-import path from "path";
-
 
 import adminRoutes from "./routes/adminRoutes.js";
 import consultationRoutes from "./routes/consultationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import creatorRoutes from "./routes/creatorRoutes.js";
 import brandRoutes from "./routes/brandRoutes.js";
-import notificationRoutes from "./routes/notifcationRoute.js";
-import bookingRoutes from "./routes/bookingRoutes.js"
+
+import bookingRoutes from "./routes/bookingRoutes.js";
 
 import connectDB from "./config/db.js";
 
 dotenv.config();
-
-// DB CONNECTION (ONLY ONCE)
 connectDB();
 
 const app = express();
-
-// HTTP SERVER (FOR SOCKET)
 const server = http.createServer(app);
 
-// SOCKET SETUP
+// 🔥 IMPORTANT: FRONTEND URLS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://influnexa-frontend.vercel.app",
+];
+
+// =======================
+// 🔥 SOCKET SETUP
+// =======================
 const io = new Server(server, {
   cors: {
-    origin:[ "http://localhost:5173",
-    "https://influnexa-frontend.vercel.app",],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   },
 });
 
 export { io };
 
-// SOCKET EVENTS
 io.on("connection", (socket) => {
   console.log("Admin Connected:", socket.id);
 
@@ -46,30 +47,36 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use(express.urlencoded({ extended: true }));
-// MIDDLEWARE
-app.use(cors());
+// =======================
+// 🔥 EXPRESS MIDDLEWARE
+// =======================
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// ROUTES (IMPORTANT FIX HERE)
-
-
+// =======================
+// 🔥 ROUTES
+// =======================
 app.use("/api/consultation", consultationRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/creator", creatorRoutes);
-
-// ✅ FIXED BRAND ROUTE
 app.use("/api/brands", brandRoutes);
-
 app.use("/api/admin", adminRoutes);
-app.use("/uploads", express.static("uploads"));
-app.use(
-  "/api/notifications",
-  notificationRoutes
-);
+
 app.use("/api/bookings", bookingRoutes);
 
-// SERVER START
+// static uploads
+app.use("/uploads", express.static("uploads"));
+
+// =======================
+// 🔥 START SERVER
+// =======================
 const PORT = process.env.PORT || 10000;
 
 server.listen(PORT, () => {
