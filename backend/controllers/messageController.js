@@ -1,5 +1,5 @@
 import message from "../models/message.js";
-import nodemailer from "nodemailer";
+// import nodemailer from "nodemailer";
 
 export const sendMessage = async (req, res) => {
   try {
@@ -14,13 +14,13 @@ export const sendMessage = async (req, res) => {
             message
           });
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    // const transporter = nodemailer.createTransport({
+    //   service: "gmail",
+    //   auth: {
+    //     user: process.env.EMAIL_USER,
+    //     pass: process.env.EMAIL_PASS,
+    //   },
+    // });
 
     // await transporter.sendMail({
     //   from: process.env.EMAIL_USER,
