@@ -59,14 +59,12 @@ router.post(
 );
 
 router.get("/", getAllCreators);
+router.get("/featured",getFeaturedCreators);
 // UPDATE
 router.put("/:id", upload.single("creatorImage"), updateCreator);
 
 // DELETE
 router.delete("/:id", deleteCreator);
-router.get(
-"/featured",
-getFeaturedCreators
-);
+
 
 export default router;
