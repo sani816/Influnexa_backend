@@ -51,11 +51,11 @@ if (req.body.campaignTypes) {
     });
 
     // 🔥 LIVE UPDATE
-   io.emit("new-creator", creator);
-io.emit("notification", {
-  message: "New Influencer Registered",
-  type: "creator",
-});
+//    io.emit("new-creator", creator);
+// io.emit("notification", {
+//   message: "New Influencer Registered",
+//   type: "creator",
+// });
 
     return res.status(201).json({
       success: true,
@@ -157,10 +157,10 @@ export const updateCreator = async (req, res) => {
     // 🔥 LIVE UPDATE
    io.emit("update-creator", updatedCreator);
 
-io.emit("notification", {
-  message: "Influencer Profile Updated",
-  type: "creator",
-});
+// io.emit("notification", {
+//   message: "Influencer Profile Updated",
+//   type: "creator",
+// });
 
     return res.status(200).json({
       success: true,
