@@ -8,14 +8,44 @@ import { io } from "../server.js";
 export const createInfluencer = async (req, res) => {
   try {
     const {
-      instagramUsername,
-      fullName,
-      email,
-      mobileNumber,
-      gender,
-      city,
-      state,
-      pincode,
+       instagramUsername,
+  instagramLink,
+  followersRange,
+
+  fullName,
+  email,
+  mobileNumber,
+  whatsappNumber,
+
+  gender,
+  dob,
+
+  preferredCategory,
+  campaignTypes,
+
+  reelRate,
+  storyRate,
+  ytVideoRate,
+
+  hasYoutube,
+  youtubeName,
+  youtubeLink,
+  youtubeSubs,
+
+  address1,
+  address2,
+  city,
+  state,
+  pincode,
+
+  canReceiveProducts,
+  addressType,
+
+  brandNames,
+
+  consent1,
+  consent2,
+  consent3,
     } = req.body;
 
     // VALIDATION
