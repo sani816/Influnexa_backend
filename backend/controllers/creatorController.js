@@ -110,7 +110,6 @@ const creators = await Creator.find()
 
 followers:-1,
 
-rating:-1
 
 })
 

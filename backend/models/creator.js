@@ -4,7 +4,10 @@ const creatorSchema = new mongoose.Schema(
   {
     instagramUsername: String,
     instagramLink: String,
-    followersRange: String,
+    followersRange: {
+      type:Number,
+      default:0
+    },
 
     fullName: String,
     email: String,
