@@ -32,6 +32,7 @@ const upload = multer({
 router.post(
   "/register",
   upload.single("creatorImage"),
+  createInfluencer,
   async (req, res) => {
     try {
       const creator = new Creator({
