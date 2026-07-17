@@ -19,13 +19,28 @@ export const createInfluencer = async (req, res) => {
     } = req.body;
 
     // VALIDATION
-    if (!instagramUsername?.trim()) {
+   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^[6-9]\d{9}$/;
+const pincodeRegex = /^[1-9][0-9]{5}$/;
+const urlRegex = /^(https?:\/\/)?(www\.)?(instagram\.com|youtube\.com|youtu\.be)/i;
+
+// Instagram Username
+if (!instagramUsername?.trim()) {
   return res.status(400).json({
     success: false,
     message: "Instagram username is required",
   });
 }
 
+// Instagram Link
+if (!req.body.instagramLink?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "Instagram profile link is required",
+  });
+}
+
+// Full Name
 if (!fullName?.trim()) {
   return res.status(400).json({
     success: false,
@@ -33,6 +48,7 @@ if (!fullName?.trim()) {
   });
 }
 
+// Email
 if (!email?.trim()) {
   return res.status(400).json({
     success: false,
@@ -40,16 +56,20 @@ if (!email?.trim()) {
   });
 }
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 if (!emailRegex.test(email)) {
   return res.status(400).json({
     success: false,
-    message: "Please enter a valid email address",
+    message: "Please enter a valid email",
   });
 }
 
-const phoneRegex = /^[6-9]\d{9}$/;
+// Mobile Number
+if (!mobileNumber?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "Mobile number is required",
+  });
+}
 
 if (!phoneRegex.test(mobileNumber)) {
   return res.status(400).json({
@@ -58,13 +78,79 @@ if (!phoneRegex.test(mobileNumber)) {
   });
 }
 
-if (!gender) {
+// WhatsApp Number
+if (
+  req.body.whatsappNumber &&
+  !phoneRegex.test(req.body.whatsappNumber)
+) {
   return res.status(400).json({
     success: false,
-    message: "Please select gender",
+    message: "Please enter a valid WhatsApp number",
   });
 }
 
+// Gender
+if (!gender) {
+  return res.status(400).json({
+    success: false,
+    message: "Gender is required",
+  });
+}
+
+// DOB
+if (!req.body.dob) {
+  return res.status(400).json({
+    success: false,
+    message: "Date of birth is required",
+  });
+}
+
+// Followers
+if (!req.body.followersRange) {
+  return res.status(400).json({
+    success: false,
+    message: "Followers range is required",
+  });
+}
+
+// Preferred Category
+if (
+  !req.body.preferredCategory ||
+  req.body.preferredCategory.length === 0
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Please select at least one category",
+  });
+}
+
+// Campaign Types
+if (
+  !req.body.campaignTypes ||
+  req.body.campaignTypes.length === 0
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Please select at least one campaign type",
+  });
+}
+
+// Rates
+if (!req.body.reelRate) {
+  return res.status(400).json({
+    success: false,
+    message: "Reel rate is required",
+  });
+}
+
+if (!req.body.storyRate) {
+  return res.status(400).json({
+    success: false,
+    message: "Story rate is required",
+  });
+}
+
+// City
 if (!city?.trim()) {
   return res.status(400).json({
     success: false,
@@ -72,6 +158,7 @@ if (!city?.trim()) {
   });
 }
 
+// State
 if (!state?.trim()) {
   return res.status(400).json({
     success: false,
@@ -79,10 +166,35 @@ if (!state?.trim()) {
   });
 }
 
-if (!/^[1-9][0-9]{5}$/.test(pincode)) {
+// Pincode
+if (!pincodeRegex.test(pincode)) {
   return res.status(400).json({
     success: false,
     message: "Please enter a valid pincode",
+  });
+}
+
+// Address Type
+if (!req.body.addressType) {
+  return res.status(400).json({
+    success: false,
+    message: "Please select address type",
+  });
+}
+
+// Can Receive Products
+if (!req.body.canReceiveProducts) {
+  return res.status(400).json({
+    success: false,
+    message: "Please select whether you can receive products",
+  });
+}
+
+// Image
+if (!req.file) {
+  return res.status(400).json({
+    success: false,
+    message: "Please upload a profile image",
   });
 }
 
