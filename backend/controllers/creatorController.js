@@ -19,21 +19,72 @@ export const createInfluencer = async (req, res) => {
     } = req.body;
 
     // VALIDATION
-    if (
-      !instagramUsername ||
-      !fullName ||
-      !email ||
-      !mobileNumber ||
-      !gender ||
-      !city ||
-      !state ||
-      !pincode
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Please fill all required fields",
-      });
-    }
+    if (!instagramUsername?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "Instagram username is required",
+  });
+}
+
+if (!fullName?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "Full name is required",
+  });
+}
+
+if (!email?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "Email is required",
+  });
+}
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!emailRegex.test(email)) {
+  return res.status(400).json({
+    success: false,
+    message: "Please enter a valid email address",
+  });
+}
+
+const phoneRegex = /^[6-9]\d{9}$/;
+
+if (!phoneRegex.test(mobileNumber)) {
+  return res.status(400).json({
+    success: false,
+    message: "Please enter a valid mobile number",
+  });
+}
+
+if (!gender) {
+  return res.status(400).json({
+    success: false,
+    message: "Please select gender",
+  });
+}
+
+if (!city?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "City is required",
+  });
+}
+
+if (!state?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "State is required",
+  });
+}
+
+if (!/^[1-9][0-9]{5}$/.test(pincode)) {
+  return res.status(400).json({
+    success: false,
+    message: "Please enter a valid pincode",
+  });
+}
 
     if (req.body.preferredCategory) {
   req.body.preferredCategory = JSON.parse(
