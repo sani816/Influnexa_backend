@@ -9,6 +9,7 @@ import {
   deleteCreator
 } from "../controllers/creatorController.js";
 
+
 const router = express.Router();
 
 const storage = multer.diskStorage({
