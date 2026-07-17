@@ -6,7 +6,8 @@ import {
   getAllCreators,
   createInfluencer,
   updateCreator,
-  deleteCreator
+  deleteCreator,
+  getFeaturedCreators
 } from "../controllers/creatorController.js";
 
 
@@ -63,5 +64,9 @@ router.put("/:id", upload.single("creatorImage"), updateCreator);
 
 // DELETE
 router.delete("/:id", deleteCreator);
+router.get(
+"/featured",
+getFeaturedCreators
+);
 
 export default router;
