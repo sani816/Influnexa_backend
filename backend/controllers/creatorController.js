@@ -94,7 +94,62 @@ export const getAllCreators = async (req, res) => {
   }
 };
 
+// =====================
+// ⭐ GET FEATURED CREATORS
+// MOST FOLLOWERS + HIGHEST RATING
+// =====================
 
+export const getFeaturedCreators = async(req,res)=>{
+
+try{
+
+
+const creators = await Creator.find()
+
+.sort({
+
+followers:-1,
+
+rating:-1
+
+})
+
+.limit(6);
+
+
+
+return res.status(200).json({
+
+success:true,
+
+creators
+
+});
+
+
+}
+catch(error){
+
+
+console.error(
+"FEATURED CREATOR ERROR:",
+error
+);
+
+
+return res.status(500).json({
+
+success:false,
+
+message:error.message
+
+});
+
+
+}
+
+
+};
 // =====================
 // DELETE CREATOR
 // =====================

@@ -42,6 +42,19 @@ preferredCategory: {
     addressType: String,
 
     brandNames: String,
+     // ADD THIS
+    followers:{
+        type:Number,
+        default:0
+    },
+
+
+    // ADD THIS
+    rating:{
+        type:Number,
+        default:0
+    },
+
 
     image: {
       type: String, // URL or uploaded file path
