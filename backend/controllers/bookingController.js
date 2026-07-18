@@ -9,7 +9,6 @@ export const getBookings = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 // CREATE BOOKING
 export const createBooking = async (req, res, io) => {
   try {
