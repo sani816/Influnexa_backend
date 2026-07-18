@@ -289,29 +289,18 @@ export const getAllCreators = async (req, res) => {
 // =====================
 export const getFeaturedCreators = async (req, res) => {
   try {
-    const creators = await Creator.find();
+    const creators = await Creator.find()
+      .sort({ followersRange: -1 }) // Highest rank first
+      .limit(6);
 
-    const rank = {
-      "Under 2K": 1,
-      "2K - 10K": 2,
-      "10K - 50K": 3,
-      "50K - 100K": 4,
-      "100K+": 5,
-    };
-
-    const featuredCreators = creators
-      .sort((a, b) => {
-        return (rank[b.followersRange] || 0) - (rank[a.followersRange] || 0);
-      })
-      .slice(0, 6);
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      creators: featuredCreators,
+      creators,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
