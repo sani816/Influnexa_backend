@@ -14,7 +14,6 @@ const bookingSchema = new mongoose.Schema(
       default: "contact",
     },
 
-
   },
   { timestamps: true }
 );

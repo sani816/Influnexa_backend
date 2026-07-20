@@ -290,17 +290,18 @@ export const getAllCreators = async (req, res) => {
 export const getFeaturedCreators = async (req, res) => {
   try {
     const creators = await Creator.find()
-      .sort({ followersRange: -1 }) // Highest rank first
+      .sort({
+        followersRange: -1,
+        youtubeSubs: -1,
+      })
       .limit(6);
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       creators,
     });
   } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });

@@ -32,7 +32,10 @@ preferredCategory: {
 
     youtubeName: String,
     youtubeLink: String,
-    youtubeSubs: String,
+    youtubeSubs: {
+      type:Number,
+      default:0
+    },
 
     address1: String,
     address2: String,
