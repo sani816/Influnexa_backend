@@ -3,14 +3,17 @@ import nodemailer from "nodemailer";
 
 export const bookConsultation = async (req, res) => {
   try {
-    const { name, email, date, time } = req.body;
+    const { name, email,company,budget, date, time,message } = req.body;
 
     const consultation =
       await Consultation.create({
         name,
         email,
+        company,
+        budget,
         date,
         time,
+        message
       });
 
     const transporter =

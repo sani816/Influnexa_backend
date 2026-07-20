@@ -4,8 +4,11 @@ const consultationSchema = new mongoose.Schema(
   {
     name: String,
     email: String,
+    company:String,
+    budget:Number,
     date: String,
     time: String,
+    message:String
   },
   {
     timestamps: true,
