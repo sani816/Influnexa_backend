@@ -1,19 +1,19 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
-const messageSchema = new mongoose.Schema(
-  {
-    name: String,
-    email: String,
-    company: String,
-    budget: String,
-    message:String
-  },
-  {
-    timestamps: true,
-  }
-);
+// const messageSchema = new mongoose.Schema(
+//   {
+//     name: String,
+//     email: String,
+//     company: String,
+//     budget: String,
+//     message:String
+//   },
+//   {
+//     timestamps: true,
+//   }
+// );
 
-export default mongoose.model(
-  "Message",
-  messageSchema
-);
+// export default mongoose.model(
+//   "Message",
+//   messageSchema
+// );

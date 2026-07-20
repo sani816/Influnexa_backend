@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 
 import adminRoutes from "./routes/adminRoutes.js";
 import consultationRoutes from "./routes/consultationRoutes.js";
-import messageRoutes from "./routes/messageRoutes.js";
+// import messageRoutes from "./routes/messageRoutes.js";
 import creatorRoutes from "./routes/creatorRoutes.js";
 import brandRoutes from "./routes/brandRoutes.js";
 
@@ -64,7 +64,7 @@ app.use(express.urlencoded({ extended: true }));
 // 🔥 ROUTES
 // =======================
 app.use("/api/consultation", consultationRoutes);
-app.use("/api/message", messageRoutes);
+// app.use("/api/message", messageRoutes);
 app.use("/api/creator", creatorRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/admin", adminRoutes);
