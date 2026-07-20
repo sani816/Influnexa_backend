@@ -1,5 +1,6 @@
 import Consultation from "../models/Consultation.js";
 import nodemailer from "nodemailer";
+import { io } from "../server.js";
 
 export const bookConsultation = async (req, res) => {
   try {
@@ -45,7 +46,7 @@ export const bookConsultation = async (req, res) => {
     //     <p><b>Time:</b> ${time}</p>
     //   `,
     // });
-
+io.emit("booking-update", consultation);
     res.status(201).json({
       success: true,
       message:
@@ -60,4 +61,57 @@ export const bookConsultation = async (req, res) => {
     message: error.message,
   });
 }
+};
+
+// ===============================
+// GET ALL CONSULTATIONS
+// ===============================
+export const getAllConsultations = async (req, res) => {
+  try {
+    const consultations = await Consultation.find().sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      consultations,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
+// DELETE CONSULTATION
+// ===============================
+export const deleteConsultation = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const consultation = await Consultation.findByIdAndDelete(id);
+
+    if (!consultation) {
+      return res.status(404).json({
+        success: false,
+        message: "Consultation not found",
+      });
+    }
+
+    io.emit("delete-booking", id);
+
+    res.status(200).json({
+      success: true,
+      message: "Consultation deleted successfully",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
