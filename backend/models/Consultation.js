@@ -8,7 +8,7 @@ const consultationSchema = new mongoose.Schema(
     budget:Number,
     date: String,
     time: String,
-    message:String
+    message:String,
   },
   {
     timestamps: true,

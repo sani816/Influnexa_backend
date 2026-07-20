@@ -13,7 +13,7 @@ export const bookConsultation = async (req, res) => {
         budget,
         date,
         time,
-        message
+        message,
       });
 
     const transporter =
