@@ -4,6 +4,7 @@ import http from "http";
 import { Server } from "socket.io";
 import dotenv from "dotenv";
 
+
 import adminRoutes from "./routes/adminRoutes.js";
 import consultationRoutes from "./routes/consultationRoutes.js";
 // import messageRoutes from "./routes/messageRoutes.js";
@@ -11,7 +12,7 @@ import creatorRoutes from "./routes/creatorRoutes.js";
 import brandRoutes from "./routes/brandRoutes.js";
 
 import bookingRoutes from "./routes/bookingRoutes.js";
-
+import blogRoutes from "./routes/blogRoutes.js"
 import connectDB from "./config/db.js";
 
 dotenv.config();
@@ -70,6 +71,7 @@ app.use("/api/brands", brandRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.use("/api/bookings", bookingRoutes);
+ app.use("api/blogs",blogRoutes)
 
 // static uploads
 app.use("/uploads", express.static("uploads"));

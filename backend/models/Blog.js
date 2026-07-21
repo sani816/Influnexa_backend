@@ -31,13 +31,16 @@ const blogSchema = new mongoose.Schema(
       type: String,
       default: "InfluNexa Team",
     },
+
+    status: {
+      type: String,
+      enum: ["Draft", "Published"],
+      default: "Draft",
+    },
   },
   {
     timestamps: true,
   }
 );
 
-export default mongoose.model(
-  "Blog",
-  blogSchema
-);
+export default mongoose.model("Blog", blogSchema);
