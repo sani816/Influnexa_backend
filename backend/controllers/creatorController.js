@@ -177,6 +177,13 @@ if (!req.body.storyRate) {
   });
 }
 
+if (!req.body.ytVideoRate) {
+  return res.status(400).json({
+    success: false,
+    message: "Youtube Video rate is required",
+  });
+}
+
 // City
 if (!city?.trim()) {
   return res.status(400).json({
