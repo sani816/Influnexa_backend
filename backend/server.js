@@ -52,14 +52,21 @@ io.on("connection", (socket) => {
 // =======================
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (
+        origin === "http://localhost:5173" ||
+        origin.endsWith(".vercel.app")
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 // =======================
 // 🔥 ROUTES
 // =======================
@@ -70,7 +77,7 @@ app.use("/api/brands", brandRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.use("/api/bookings", bookingRoutes);
- app.use("api/blogs",blogRoutes)
+ app.use("/api/blogs",blogRoutes)
 
 // static uploads
 app.use("/uploads", express.static("uploads"));
