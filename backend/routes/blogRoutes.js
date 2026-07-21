@@ -1,5 +1,5 @@
 import express from "express";
-import upload from "../middlewares/uploadBlog.js";
+import upload from "../middleware/uploadBlog.js";
 
 import {
   createBlog,
