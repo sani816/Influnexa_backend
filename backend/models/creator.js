@@ -27,8 +27,10 @@ preferredCategory: {
 },
     reelRate: String,
     storyRate: String,
+    postRate:String,
 
     ytVideoRate: String,
+    ytShortsRate:String,
 
     youtubeName: String,
     youtubeLink: String,

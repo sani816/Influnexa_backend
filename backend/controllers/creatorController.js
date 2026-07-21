@@ -21,8 +21,9 @@ export const createInfluencer = async (req, res) => {
   campaignTypes,
   reelRate,
   storyRate,
+  postRate,
   ytVideoRate,
-
+ytShortsRate,
   hasYoutube,
   youtubeName,
   youtubeLink,
