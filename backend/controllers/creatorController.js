@@ -238,7 +238,7 @@ if (req.body.campaignTypes) {
 }
     const creator = await Creator.create({
       ...req.body,
-      image: req.file ? req.file.filename : "",
+       image: `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
     });
 
     // 🔥 LIVE UPDATE
@@ -247,6 +247,7 @@ if (req.body.campaignTypes) {
 //   message: "New Influencer Registered",
 //   type: "creator",
 // });
+await creator.save();
 
     return res.status(201).json({
       success: true,
