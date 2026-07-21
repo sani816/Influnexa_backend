@@ -3,8 +3,7 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 import dotenv from "dotenv";
-
-
+import path from "path";
 import adminRoutes from "./routes/adminRoutes.js";
 import consultationRoutes from "./routes/consultationRoutes.js";
 // import messageRoutes from "./routes/messageRoutes.js";
