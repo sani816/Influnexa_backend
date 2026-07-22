@@ -354,7 +354,7 @@ export const updateCreator = async (req, res) => {
       id,
       {
         ...req.body,
-        image: req.file ? req.file.filename : req.body.image,
+        image: req.file ? req.file.path : req.body.image,
       },
       {
         new: true,

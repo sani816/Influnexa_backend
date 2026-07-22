@@ -1,6 +1,6 @@
 import express from "express";
 import Creator from "../models/Creator.js";
-import multer from "multer";
+
 import upload from "../middleware/upload.js";
 import {
   getAllCreators,
@@ -12,23 +12,6 @@ import {
 
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024,
-  },
-});
 
 router.post(
   "/register",
