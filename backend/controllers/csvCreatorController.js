@@ -100,9 +100,7 @@ export const uploadCreatorsCSV = async (req, res) => {
           status:
             row.status || "Pending",
 
-            source:"csv",
-             csvFile:req.file.path
-
+           
 
         });
 
