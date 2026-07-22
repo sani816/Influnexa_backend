@@ -3,76 +3,150 @@ import csv from "csv-parser";
 import Creator from "../models/Creator.js";
 
 
-export const uploadCreatorsCSV = async(req,res)=>{
+export const uploadCreatorsCSV = async (req, res) => {
 
- try{
+  try {
 
-   if(!req.file){
-     return res.status(400).json({
-       message:"CSV file required"
-     });
-   }
-
-
-   const creators=[];
+    if (!req.file) {
+      return res.status(400).json({
+        message: "CSV file required"
+      });
+    }
 
 
-   fs.createReadStream(req.file.path)
-   .pipe(csv())
-   .on("data",(row)=>{
+    const creators = [];
 
-      creators.push({
 
-        fullName: row.fullName,
-        email: row.email,
-        mobileNumber: row.mobileNumber,
+    fs.createReadStream(req.file.path)
 
-        instagramUsername:
-        row.instagramUsername,
+      .pipe(csv())
 
-        instagramLink:
-        row.instagramLink,
+      .on("data", (row) => {
 
-        followersRange:
-        Number(row.followersRange) || 0,
 
-        gender:
-        row.gender,
+        creators.push({
 
-        campaignTypes:
-        row.campaignTypes
-        ? row.campaignTypes.split(",")
-        : []
+          // Instagram Details
+          instagramUsername: row.instagramUsername,
+          instagramLink: row.instagramLink,
+
+
+          // Followers
+          followersRange:
+            Number(row.followersRange) || 0,
+
+
+          // Personal Details
+          fullName: row.fullName,
+          email: row.email,
+
+          mobileNumber:
+            row.mobileNumber,
+
+          whatsappNumber:
+            row.whatsappNumber,
+
+
+          gender:
+            row.gender,
+
+          dob:
+            row.dob,
+
+
+          // Campaign Details
+          campaignTypes:
+            row.campaignTypes
+              ? row.campaignTypes.split(",")
+              : [],
+
+
+          // Location Details
+          address:
+            row.address,
+
+          city:
+            row.city,
+
+          state:
+            row.state,
+
+          pincode:
+            row.pincode,
+
+
+          // Professional Details
+          bio:
+            row.bio,
+
+          category:
+            row.category,
+
+
+          youtubeLink:
+            row.youtubeLink,
+
+
+          facebookLink:
+            row.facebookLink,
+
+
+          // Image
+          image:
+            row.image || "",
+
+
+          // Status
+          status:
+            row.status || "Pending"
+
+        });
+
+
+      })
+
+
+      .on("end", async () => {
+
+
+        if (creators.length === 0) {
+
+          return res.status(400).json({
+            message:"CSV has no data"
+          });
+
+        }
+
+
+        await Creator.insertMany(creators);
+
+
+        res.status(201).json({
+
+          success:true,
+
+          message:
+          `${creators.length} creators uploaded successfully`
+
+        });
+
 
       });
 
-   })
-
-   .on("end",async()=>{
 
 
-      await Creator.insertMany(creators);
+  }
 
+  catch(error){
 
-      res.status(201).json({
+    console.log(error);
 
-        success:true,
-        message:
-        `${creators.length} creators uploaded`
+    res.status(500).json({
 
-      });
+      message:error.message
 
+    });
 
-   });
-
-
- }
- catch(error){
-
-   res.status(500).json({
-     message:error.message
-   });
-
- }
+  }
 
 };
