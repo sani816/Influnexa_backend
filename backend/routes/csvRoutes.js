@@ -3,6 +3,7 @@ import uploadCSV from "../middleware/uploadCSV.js";
 import {
  uploadCreatorsCSV
 } from "../controllers/csvCreatorController.js";
+import { deleteCSVCreators } from "../controllers/csvCreatorController.js";
 
 
 const router = express.Router();
