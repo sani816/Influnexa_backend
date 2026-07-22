@@ -72,45 +72,32 @@ export const uploadCreatorsCSV = async (req, res) => {
 
       .on("end", async () => {
         try {
-          console.log("Total creators:", creators.length);
+          console.log("TOTAL:", creators.length);
 
           const result = await Creator.insertMany(creators);
 
-          return res.status(201).json({
-            success: true,
-            message: `${result.length} creators uploaded successfully`,
-          });
+          console.log("INSERT SUCCESS");
+
+          res.json(result);
 
         } catch (err) {
-          console.error("INSERT MANY ERROR:");
-          console.error(err);
+          console.log("INSERT ERROR:", err);
 
-          return res.status(500).json({
-            success: false,
+          res.status(500).json({
             message: err.message,
           });
         }
-      })
-
-      .on("error", (err) => {
-        console.error("CSV ERROR:", err);
-
-        return res.status(500).json({
-          success: false,
-          message: err.message,
-        });
       });
 
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
 
-    return res.status(500).json({
-      success: false,
-      message: error.message,
+    console.log("MAIN ERROR:", err);
+
+    res.status(500).json({
+      message: err.message,
     });
   }
 };
-
 // ================= DELETE CSV CREATORS =================
 export const deleteCSVCreators = async (req, res) => {
   try {
