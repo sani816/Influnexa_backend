@@ -3,12 +3,8 @@ import Blog from "../models/Blog.js";
 
 export const createBlog = async (req, res) => {
   try {
-
-    if (!req.file) {
-      return res.status(400).json({
-        message: "Blog image is required"
-      });
-    }
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
 
     const blog = await Blog.create({
       title: req.body.title,
@@ -23,11 +19,11 @@ export const createBlog = async (req, res) => {
     res.status(201).json(blog);
 
   } catch (err) {
-
-    console.log("Create Blog Error:", err);
+    console.error("CREATE BLOG ERROR:", err);
 
     res.status(500).json({
       message: err.message,
+      stack: err.stack,
     });
   }
 };
