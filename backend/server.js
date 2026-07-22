@@ -77,7 +77,7 @@ app.use("/api/bookings", bookingRoutes);
 );
 
 // static uploads
-app.use("/uploads", express.static("uploads"));
+// app.use("/uploads", express.static("uploads"));
 
 // =======================
 // 🔥 START SERVER

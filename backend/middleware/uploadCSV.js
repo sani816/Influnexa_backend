@@ -1,38 +1,17 @@
 import multer from "multer";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "../config/cloudinary.js";
 
-
-const storage = multer.diskStorage({
-
-  destination(req,file,cb){
-    cb(null,"uploads");
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "InfluNexa/CSV",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
-
-  filename(req,file,cb){
-    cb(
-      null,
-      Date.now()+"-"+file.originalname
-    );
-  }
-
 });
 
-
-const uploadCSV = multer({
+const uploadBlog = multer({
   storage,
-  fileFilter(req,file,cb){
-
-    if(
-      file.mimetype === "text/csv" ||
-      file.originalname.endsWith(".csv")
-    ){
-      cb(null,true);
-    }
-    else{
-      cb(new Error("Only CSV files allowed"));
-    }
-
-  }
 });
 
-
-export default uploadCSV;
+export default uploadBlog;

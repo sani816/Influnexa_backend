@@ -17,7 +17,7 @@ export const createBlog = async (req, res) => {
       content: req.body.content,
       author: req.body.author,
       status: req.body.status,
-      image: req.file.filename,
+      image: req.file.path,
     });
 
     res.status(201).json(blog);
@@ -49,7 +49,7 @@ export const updateBlog = async (req, res) => {
     blog.status = req.body.status;
 
     if (req.file) {
-      blog.image = req.file.filename;
+      blog.image = req.file.path;
     }
 
     await blog.save();

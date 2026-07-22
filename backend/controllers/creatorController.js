@@ -238,7 +238,7 @@ if (req.body.campaignTypes) {
 }
     const creator = await Creator.create({
       ...req.body,
-       image: `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+       image: req.file?.path || ""
     });
 
     // 🔥 LIVE UPDATE

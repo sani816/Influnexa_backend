@@ -1,7 +1,7 @@
 import express from "express";
 import Creator from "../models/Creator.js";
 import multer from "multer";
-
+import upload from "../middleware/upload.js";
 import {
   getAllCreators,
   createInfluencer,
@@ -38,7 +38,7 @@ router.post(
     try {
       const creator = new Creator({
         ...req.body,
-        image: req.file?.filename,
+        image: req.file?.path || "",
       });
 
       await creator.save();
