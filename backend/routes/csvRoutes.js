@@ -14,5 +14,8 @@ router.post(
  uploadCreatorsCSV
 );
 
-
+router.delete(
+ "/creators",
+ deleteCSVCreators
+);
 export default router;

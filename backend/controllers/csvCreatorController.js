@@ -98,7 +98,9 @@ export const uploadCreatorsCSV = async (req, res) => {
 
           // Status
           status:
-            row.status || "Pending"
+            row.status || "Pending",
+
+            source:"csv"
 
         });
 
@@ -148,5 +150,35 @@ export const uploadCreatorsCSV = async (req, res) => {
     });
 
   }
+
+};
+
+export const deleteCSVCreators = async(req,res)=>{
+
+ try{
+
+   const result = await Creator.deleteMany({
+     source:"csv"
+   });
+
+
+   res.json({
+
+    success:true,
+
+    message:
+    `${result.deletedCount} CSV creators deleted`
+
+   });
+
+
+ }
+ catch(error){
+
+   res.status(500).json({
+     message:error.message
+   });
+
+ }
 
 };
