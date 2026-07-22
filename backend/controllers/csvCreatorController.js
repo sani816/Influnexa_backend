@@ -2,182 +2,128 @@ import fs from "fs";
 import csv from "csv-parser";
 import Creator from "../models/Creator.js";
 
-
+// ================= UPLOAD CSV =================
 export const uploadCreatorsCSV = async (req, res) => {
-
   try {
-
     if (!req.file) {
       return res.status(400).json({
-        message: "CSV file required"
+        message: "CSV file required",
       });
     }
 
-
     const creators = [];
 
-
     fs.createReadStream(req.file.path)
-
       .pipe(csv())
 
       .on("data", (row) => {
-
-
         creators.push({
-
-          // Instagram Details
           instagramUsername: row.instagramUsername,
           instagramLink: row.instagramLink,
 
+          followersRange: Number(row.followersRange) || 0,
 
-          // Followers
-          followersRange:
-            Number(row.followersRange) || 0,
-
-
-          // Personal Details
           fullName: row.fullName,
           email: row.email,
+          mobileNumber: row.mobileNumber,
+          whatsappNumber: row.whatsappNumber,
 
-          mobileNumber:
-            row.mobileNumber,
+          gender: row.gender,
+          dob: row.dob,
 
-          whatsappNumber:
-            row.whatsappNumber,
+          campaignTypes: row.campaignTypes
+            ? row.campaignTypes.split(",")
+            : [],
 
+          preferredCategory: row.preferredCategory
+            ? row.preferredCategory.split(",")
+            : [],
 
-          gender:
-            row.gender,
+          reelRate: row.reelRate,
+          storyRate: row.storyRate,
+          postRate: row.postRate,
 
-          dob:
-            row.dob,
+          ytVideoRate: row.ytVideoRate,
+          ytShortsRate: row.ytShortsRate,
 
+          youtubeName: row.youtubeName,
+          youtubeLink: row.youtubeLink,
+          youtubeSubs: Number(row.youtubeSubs) || 0,
 
-          // Campaign Details
-          campaignTypes:
-            row.campaignTypes
-              ? row.campaignTypes.split(",")
-              : [],
+          address1: row.address1,
+          address2: row.address2,
 
+          city: row.city,
+          state: row.state,
+          pincode: row.pincode,
 
-          // Location Details
-          address:
-            row.address,
+          canReceiveProducts: row.canReceiveProducts,
+          addressType: row.addressType,
 
-          city:
-            row.city,
+          brandNames: row.brandNames,
 
-          state:
-            row.state,
+          image: row.image || "",
 
-          pincode:
-            row.pincode,
-
-
-          // Professional Details
-          bio:
-            row.bio,
-
-          category:
-            row.category,
-
-
-          youtubeLink:
-            row.youtubeLink,
-
-
-          facebookLink:
-            row.facebookLink,
-
-
-          // Image
-          image:
-            row.image || "",
-
-
-          // Status
-          status:
-            row.status || "Pending",
-
-           
-
+          consent1: row.consent1 === "true",
+          consent2: row.consent2 === "true",
+          consent3: row.consent3 === "true",
         });
-
-
       })
 
-
       .on("end", async () => {
+        try {
+          console.log("Total creators:", creators.length);
 
+          const result = await Creator.insertMany(creators);
 
-        if (creators.length === 0) {
-
-          return res.status(400).json({
-            message:"CSV has no data"
+          return res.status(201).json({
+            success: true,
+            message: `${result.length} creators uploaded successfully`,
           });
 
+        } catch (err) {
+          console.error("INSERT MANY ERROR:");
+          console.error(err);
+
+          return res.status(500).json({
+            success: false,
+            message: err.message,
+          });
         }
+      })
 
+      .on("error", (err) => {
+        console.error("CSV ERROR:", err);
 
-        await Creator.insertMany(creators);
-
-
-        res.status(201).json({
-
-          success:true,
-
-          message:
-          `${creators.length} creators uploaded successfully`
-
+        return res.status(500).json({
+          success: false,
+          message: err.message,
         });
-
-
       });
 
+  } catch (error) {
+    console.error(error);
 
-
-  }
-
-  catch(error){
-
-    console.log(error);
-
-    res.status(500).json({
-
-      message:error.message
-
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
-
   }
-
 };
 
+// ================= DELETE CSV CREATORS =================
 export const deleteCSVCreators = async (req, res) => {
-
   try {
-
     const result = await Creator.deleteMany({});
 
-
     res.json({
-
       success: true,
-
-      message:
-      `${result.deletedCount} creators deleted`
-
+      message: `${result.deletedCount} creators deleted`,
     });
 
-
-  } catch(error) {
-
+  } catch (error) {
     res.status(500).json({
-
-      message: error.message
-
+      message: error.message,
     });
-
   }
-
 };
