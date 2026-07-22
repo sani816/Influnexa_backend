@@ -1,8 +1,8 @@
-import fs from "fs";
+import axios from "axios";
 import csv from "csv-parser";
 import Creator from "../models/Creator.js";
+import { Readable } from "stream";
 
-// ================= UPLOAD CSV =================
 export const uploadCreatorsCSV = async (req, res) => {
   try {
     if (!req.file) {
@@ -11,9 +11,16 @@ export const uploadCreatorsCSV = async (req, res) => {
       });
     }
 
+    console.log("Cloudinary URL:", req.file.path);
+
     const creators = [];
 
-    fs.createReadStream(req.file.path)
+    // Download CSV from Cloudinary
+    const response = await axios.get(req.file.path, {
+      responseType: "stream",
+    });
+
+    response.data
       .pipe(csv())
 
       .on("data", (row) => {
@@ -72,16 +79,15 @@ export const uploadCreatorsCSV = async (req, res) => {
 
       .on("end", async () => {
         try {
-          console.log("TOTAL:", creators.length);
-
           const result = await Creator.insertMany(creators);
 
-          console.log("INSERT SUCCESS");
-
-          res.json(result);
+          res.status(201).json({
+            success: true,
+            message: `${result.length} creators uploaded successfully`,
+          });
 
         } catch (err) {
-          console.log("INSERT ERROR:", err);
+          console.log(err);
 
           res.status(500).json({
             message: err.message,
@@ -90,27 +96,10 @@ export const uploadCreatorsCSV = async (req, res) => {
       });
 
   } catch (err) {
-
-    console.log("MAIN ERROR:", err);
+    console.log(err);
 
     res.status(500).json({
       message: err.message,
-    });
-  }
-};
-// ================= DELETE CSV CREATORS =================
-export const deleteCSVCreators = async (req, res) => {
-  try {
-    const result = await Creator.deleteMany({});
-
-    res.json({
-      success: true,
-      message: `${result.deletedCount} creators deleted`,
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
     });
   }
 };
