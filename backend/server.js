@@ -25,7 +25,6 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://influnexa-frontend.vercel.app",
 ];
-
 // =======================
 // 🔥 SOCKET SETUP
 // =======================
