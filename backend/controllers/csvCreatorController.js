@@ -1,8 +1,8 @@
-import axios from "axios";
+import fs from "fs";
 import csv from "csv-parser";
 import Creator from "../models/Creator.js";
-import { Readable } from "stream";
 
+// ================= UPLOAD CSV =================
 export const uploadCreatorsCSV = async (req, res) => {
   try {
     if (!req.file) {
@@ -11,16 +11,9 @@ export const uploadCreatorsCSV = async (req, res) => {
       });
     }
 
-    console.log("Cloudinary URL:", req.file.path);
-
     const creators = [];
 
-    // Download CSV from Cloudinary
-    const response = await axios.get(req.file.path, {
-      responseType: "stream",
-    });
-
-    response.data
+    fs.createReadStream(req.file.path)
       .pipe(csv())
 
       .on("data", (row) => {
@@ -79,15 +72,16 @@ export const uploadCreatorsCSV = async (req, res) => {
 
       .on("end", async () => {
         try {
+          console.log("TOTAL:", creators.length);
+
           const result = await Creator.insertMany(creators);
 
-          res.status(201).json({
-            success: true,
-            message: `${result.length} creators uploaded successfully`,
-          });
+          console.log("INSERT SUCCESS");
+
+          res.json(result);
 
         } catch (err) {
-          console.log(err);
+          console.log("INSERT ERROR:", err);
 
           res.status(500).json({
             message: err.message,
@@ -96,7 +90,8 @@ export const uploadCreatorsCSV = async (req, res) => {
       });
 
   } catch (err) {
-    console.log(err);
+
+    console.log("MAIN ERROR:", err);
 
     res.status(500).json({
       message: err.message,
