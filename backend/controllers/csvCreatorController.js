@@ -153,32 +153,31 @@ export const uploadCreatorsCSV = async (req, res) => {
 
 };
 
-export const deleteCSVCreators = async(req,res)=>{
+export const deleteCSVCreators = async (req, res) => {
 
- try{
+  try {
 
-   const result = await Creator.deleteMany({
-     source:"csv"
-   });
+    const result = await Creator.deleteMany({});
 
 
-   res.json({
+    res.json({
 
-    success:true,
+      success: true,
 
-    message:
-    `${result.deletedCount} CSV creators deleted`
+      message:
+      `${result.deletedCount} creators deleted`
 
-   });
+    });
 
 
- }
- catch(error){
+  } catch(error) {
 
-   res.status(500).json({
-     message:error.message
-   });
+    res.status(500).json({
 
- }
+      message: error.message
+
+    });
+
+  }
 
 };
