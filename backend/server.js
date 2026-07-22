@@ -13,6 +13,7 @@ import brandRoutes from "./routes/brandRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js"
 import connectDB from "./config/db.js";
+import csvRoutes from "./routes/csvRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -70,6 +71,10 @@ app.use("/api/admin", adminRoutes);
 
 app.use("/api/bookings", bookingRoutes);
  app.use("/api/blogs",blogRoutes)
+ app.use(
+ "/api/csv",
+ csvRoutes
+);
 
 // static uploads
 app.use("/uploads", express.static("uploads"));
