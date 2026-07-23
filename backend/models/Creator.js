@@ -15,7 +15,10 @@ const creatorSchema = new mongoose.Schema(
   required: true,
   unique: true,
 },
-    mobileNumber: String,
+    mobileNumber:{
+    type:String,
+    unique:true
+    },
     whatsappNumber: String,
 
     gender: String,
