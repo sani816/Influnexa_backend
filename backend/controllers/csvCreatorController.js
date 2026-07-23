@@ -308,6 +308,9 @@ return res.status(200).json({
     });
   }
 };
+
+// get latest report
+
  export const getLatestCSVReport = async(req,res)=>{
 
 try{
@@ -318,15 +321,23 @@ const report = await CSVUploadReport
 createdAt:-1
 });
 
+if(!report){
+ return res.json({
 
-res.json({
+success:true,
+
+report:null,
+message:"No CSV report found"
+
+});
+}
+return res.json({
 
 success:true,
 
 report
 
 });
-
 
 }catch(error){
 
@@ -344,19 +355,36 @@ message:error.message
 // ==========================
 // DELETE ALL CREATORS
 // ==========================
-export const deleteCSVCreators = async (req, res) => {
-  try {
-    const result = await Creator.deleteMany({});
+export const deleteCSVCreators = async (req,res)=>{
 
-    return res.json({
-      success: true,
-      message: `${result.deletedCount} creators deleted`,
-    });
+try{
 
-  } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
+const result = await Creator.deleteMany({});
+
+
+await CSVUploadReport.deleteMany({});
+
+
+return res.json({
+
+success:true,
+
+message:`${result.deletedCount} creators deleted`
+
+});
+
+
+}
+catch(error){
+
+return res.status(500).json({
+
+success:false,
+
+message:error.message
+
+});
+
+}
+
 };
