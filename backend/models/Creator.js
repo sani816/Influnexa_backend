@@ -37,7 +37,7 @@ preferredCategory: {
     postRate:String,
     hasYoutube: {
   type: String,
-  enum: ["Yes", "No"],
+  enum: ["Yes", "No","yes","no"],
   default: "No",
 },
 
