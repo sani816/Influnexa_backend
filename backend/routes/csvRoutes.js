@@ -1,7 +1,7 @@
 import express from "express";
 import uploadCSV from "../middleware/uploadCSV.js";
 import {
- uploadCreatorsCSV
+ uploadCreatorsCSV,getLatestCSVReport
 } from "../controllers/csvCreatorController.js";
 import { deleteCSVCreators } from "../controllers/csvCreatorController.js";
 
@@ -14,7 +14,10 @@ router.post(
  uploadCSV.single("file"),
  uploadCreatorsCSV
 );
-
+router.get(
+"/latest-report",
+getLatestCSVReport
+);
 router.delete(
  "/creators",
  deleteCSVCreators

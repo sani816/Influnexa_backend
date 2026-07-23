@@ -1,6 +1,7 @@
 import fs from "fs";
 import csv from "csv-parser";
 import Creator from "../models/Creator.js";
+import CSVUploadReport from "../models/CSVUploadReport.js";
 
 // ==========================
 // UPLOAD CSV
@@ -96,7 +97,7 @@ export const uploadCreatorsCSV = async (req, res) => {
           for (let i = 0; i < creators.length; i++) {
           const creator = creators[i]
         
-          if (!creator.fullName.trim()) {
+          if (!creator.fullName?.trim()) {
 
     failedRecords++;
 
@@ -157,7 +158,7 @@ if (!hasInstagram && !hasYoutube) {
     continue;
 }
 
-if (creator.email) {
+if (creator.email?.trim()) {
 
     const emailExist = await Creator.findOne({
         email: creator.email
@@ -182,7 +183,7 @@ if (creator.email) {
     }
 }
 
-if (creator.mobileNumber) {
+if (creator.mobileNumber?.trim()) {
 
     const mobileExist = await Creator.findOne({
         mobileNumber: creator.mobileNumber
@@ -242,11 +243,10 @@ catch(error){
 }
 
 }
+// SAVE REPORT PERMANENTLY
+const savedReport = await CSVUploadReport.create({
 
-          fs.unlink(req.file.path, () => {});
-
-          return res.status(200).json({
-    success: true,
+    fileName: req.file.originalname,
 
     totalRecords,
 
@@ -255,8 +255,30 @@ catch(error){
     failedRecords,
 
     report
+
 });
 
+
+fs.unlink(req.file.path, () => {});
+
+
+return res.status(200).json({
+
+    success: true,
+
+    message: "CSV uploaded successfully",
+
+    reportId: savedReport._id,
+
+    totalRecords,
+
+    successfulRecords,
+
+    failedRecords,
+
+    report
+
+});
         } catch (err) {
           console.error("INSERT ERROR:");
           console.error(err);
@@ -286,7 +308,39 @@ catch(error){
     });
   }
 };
+ export const getLatestCSVReport = async(req,res)=>{
 
+try{
+
+const report = await CSVUploadReport
+.findOne()
+.sort({
+createdAt:-1
+});
+
+
+res.json({
+
+success:true,
+
+report
+
+});
+
+
+}catch(error){
+
+res.status(500).json({
+
+success:false,
+
+message:error.message
+
+});
+
+}
+
+};
 // ==========================
 // DELETE ALL CREATORS
 // ==========================
