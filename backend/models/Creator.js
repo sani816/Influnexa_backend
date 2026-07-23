@@ -10,7 +10,11 @@ const creatorSchema = new mongoose.Schema(
     },
 
     fullName: String,
-    email: String,
+    email:{
+  type: String,
+  required: true,
+  unique: true,
+},
     mobileNumber: String,
     whatsappNumber: String,
 
