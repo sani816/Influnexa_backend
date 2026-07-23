@@ -362,8 +362,7 @@ try{
 const result = await Creator.deleteMany({});
 
 
-await CSVUploadReport.deleteMany({});
-
+const deletedReports = await CSVUploadReport.deleteMany({});
 
 return res.json({
 

@@ -256,21 +256,30 @@ await creator.save();
     });
 
   } catch (error) {
+
   if (error.code === 11000) {
-    return res.status(400).json({
-      success: false,
-      message: "Email already exists",
-    });
+
+    if (error.keyPattern?.mobileNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile Number already exists",
+      });
+    }
+
+    if (error.keyPattern?.email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists",
+      });
+    }
   }
 
-  res.status(500).json({
+  return res.status(500).json({
     success: false,
     message: error.message,
   });
 }
-};
-
-
+}
 // =====================
 // GET ALL CREATORS
 // =====================
@@ -355,12 +364,43 @@ export const updateCreator = async (req, res) => {
   try {
     const { id } = req.params;
 
+    const updateData = {
+      ...req.body,
+    };
+
+    // Convert followersRange to Number
+    if (updateData.followersRange) {
+      updateData.followersRange = Number(updateData.followersRange) || 0;
+    }
+
+    // Convert campaignTypes to array
+    if (
+      updateData.campaignTypes &&
+      typeof updateData.campaignTypes === "string"
+    ) {
+      updateData.campaignTypes = updateData.campaignTypes
+        .split(",")
+        .map((item) => item.trim());
+    }
+
+    // Convert preferredCategory to array
+    if (
+      updateData.preferredCategory &&
+      typeof updateData.preferredCategory === "string"
+    ) {
+      updateData.preferredCategory = updateData.preferredCategory
+        .split(",")
+        .map((item) => item.trim());
+    }
+
+    // Update image only if uploaded
+    if (req.file) {
+      updateData.image = req.file.path;
+    }
+
     const updatedCreator = await Creator.findByIdAndUpdate(
       id,
-      {
-        ...req.body,
-        image: req.file ? req.file.path : req.body.image,
-      },
+      updateData,
       {
         new: true,
         runValidators: true,
@@ -374,26 +414,23 @@ export const updateCreator = async (req, res) => {
       });
     }
 
-    // 🔥 LIVE UPDATE
-   io.emit("update-creator", updatedCreator);
-
-// io.emit("notification", {
-//   message: "Influencer Profile Updated",
-//   type: "creator",
-// });
+    // Emit socket event only if io exists
+    if (global.io) {
+      global.io.emit("update-creator", updatedCreator);
+    }
 
     return res.status(200).json({
       success: true,
       message: "Creator updated successfully",
       creator: updatedCreator,
     });
-
   } catch (error) {
     console.error("UPDATE CREATOR ERROR:", error);
 
     return res.status(500).json({
       success: false,
       message: error.message,
+      error: error,
     });
   }
 };
