@@ -32,6 +32,12 @@ preferredCategory: {
     reelRate: String,
     storyRate: String,
     postRate:String,
+    hasYoutube: {
+  type: String,
+  enum: ["Yes", "No"],
+  default: "No",
+},
+
 
     ytVideoRate: String,
     ytShortsRate:String,
