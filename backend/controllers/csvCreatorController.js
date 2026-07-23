@@ -88,26 +88,174 @@ export const uploadCreatorsCSV = async (req, res) => {
             });
           }
 
-          const batchSize = 500;
+           const report = [];
 
-          for (let i = 0; i < creators.length; i += batchSize) {
-            const batch = creators.slice(i, i + batchSize);
+         let totalRecords = creators.length;
+         let successfulRecords = 0;
+          let failedRecords = 0;
+          for (let i = 0; i < creators.length; i++) {
+          const creator = creators[i]
+        
+          if (!creator.fullName.trim()) {
 
-            await Creator.insertMany(batch, {
-              ordered: false,
-            });
+    failedRecords++;
 
-            console.log(
-              `Inserted ${Math.min(i + batchSize, creators.length)} / ${creators.length}`
-            );
-          }
+    report.push({
+        row: i + 2,
+        fullName: "",
+        email: creator.email,
+        mobileNumber: creator.mobileNumber,
+        instagramUsername: creator.instagramUsername,
+        youtubeName: creator.youtubeName,
+        status: "Failed",
+        reason: "Full Name is required"
+    });
+
+    continue;
+}
+
+if (!creator.email && !creator.mobileNumber) {
+
+    failedRecords++;
+
+    report.push({
+        row: i + 2,
+        fullName: creator.fullName,
+        email: "",
+        mobileNumber: "",
+        instagramUsername: creator.instagramUsername,
+        youtubeName: creator.youtubeName,
+        status: "Failed",
+        reason: "Either Email or Mobile Number is required"
+    });
+
+    continue;
+}
+ const hasInstagram =
+    creator.instagramUsername ||
+    creator.instagramLink;
+
+const hasYoutube =
+    creator.youtubeName ||
+    creator.youtubeLink;
+
+if (!hasInstagram && !hasYoutube) {
+
+    failedRecords++;
+
+    report.push({
+        row: i + 2,
+        fullName: creator.fullName,
+        email: creator.email,
+        mobileNumber: creator.mobileNumber,
+        instagramUsername: "",
+        youtubeName: "",
+        status: "Failed",
+        reason: "Either Instagram or YouTube details are required"
+    });
+
+    continue;
+}
+
+if (creator.email) {
+
+    const emailExist = await Creator.findOne({
+        email: creator.email
+    });
+
+    if (emailExist) {
+
+        failedRecords++;
+
+        report.push({
+            row: i + 2,
+            fullName: creator.fullName,
+            email: creator.email,
+            mobileNumber: creator.mobileNumber,
+            instagramUsername: creator.instagramUsername,
+            youtubeName: creator.youtubeName,
+            status: "Failed",
+            reason: "Email already exists"
+        });
+
+        continue;
+    }
+}
+
+if (creator.mobileNumber) {
+
+    const mobileExist = await Creator.findOne({
+        mobileNumber: creator.mobileNumber
+    });
+
+    if (mobileExist) {
+
+        failedRecords++;
+
+        report.push({
+            row: i + 2,
+            fullName: creator.fullName,
+            email: creator.email,
+            mobileNumber: creator.mobileNumber,
+            instagramUsername: creator.instagramUsername,
+            youtubeName: creator.youtubeName,
+            status: "Failed",
+            reason: "Mobile Number already exists"
+        });
+
+        continue;
+    }
+}
+ try {
+
+    await Creator.create(creator);
+
+    successfulRecords++;
+
+    report.push({
+        row: i + 2,
+        fullName: creator.fullName,
+        email: creator.email,
+        mobileNumber: creator.mobileNumber,
+        instagramUsername: creator.instagramUsername,
+        youtubeName: creator.youtubeName,
+        status: "Uploaded",
+        reason: "Successfully uploaded"
+    });
+
+}
+catch(error){
+
+    failedRecords++;
+
+    report.push({
+        row: i + 2,
+        fullName: creator.fullName,
+        email: creator.email,
+        mobileNumber: creator.mobileNumber,
+        instagramUsername: creator.instagramUsername,
+        youtubeName: creator.youtubeName,
+        status: "Failed",
+        reason: error.message
+    });
+
+}
+
+}
 
           fs.unlink(req.file.path, () => {});
 
-          return res.status(201).json({
-            success: true,
-            message: `${creators.length} creators uploaded successfully`,
-          });
+          return res.status(200).json({
+    success: true,
+
+    totalRecords,
+
+    successfulRecords,
+
+    failedRecords,
+
+    report
+});
 
         } catch (err) {
           console.error("INSERT ERROR:");
