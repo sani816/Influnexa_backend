@@ -14,11 +14,13 @@ const creatorSchema = new mongoose.Schema(
   type: String,
   sparse: true,
   unique: true,
+  default:undefined,
 },
     mobileNumber:{
     type:String,
     unique:true,
     sparse:true,
+    default:undefined,
     },
     whatsappNumber: String,
 
