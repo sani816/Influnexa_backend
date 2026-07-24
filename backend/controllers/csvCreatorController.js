@@ -32,8 +32,8 @@ export const uploadCreatorsCSV = async (req, res) => {
           followersRange: Number(row.followersRange) || 0,
 
           fullName: row.fullName || "",
-          email: row.email || "",
-          mobileNumber: row.mobileNumber || "",
+          email: row.email?.trim() || "",
+          mobileNumber: row.mobileNumber?.trim() || "",
           whatsappNumber: row.whatsappNumber || "",
 
           gender: row.gender || "",

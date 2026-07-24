@@ -12,12 +12,13 @@ const creatorSchema = new mongoose.Schema(
     fullName: String,
     email:{
   type: String,
-  required: true,
+  sparse: true,
   unique: true,
 },
     mobileNumber:{
     type:String,
-    unique:true
+    unique:true,
+    sparse:true,
     },
     whatsappNumber: String,
 
@@ -83,6 +84,24 @@ preferredCategory: {
     timestamps: true,
   }
 );
+
+// 👇 ADD IT HERE
+creatorSchema.pre("validate", function (next) {
+  if (!this.email && !this.mobileNumber) {
+    this.invalidate(
+      "email",
+      "Either email or mobile number is required."
+    );
+
+    this.invalidate(
+      "mobileNumber",
+      "Either email or mobile number is required."
+    );
+  }
+
+  next();
+});
+
 
 // 🔥 SAFE MODEL FIX (IMPORTANT)
 const Creator =
