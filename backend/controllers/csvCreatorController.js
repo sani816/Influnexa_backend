@@ -1,6 +1,6 @@
 import fs from "fs";
 import csv from "csv-parser";
-import Creator from "../models/CsvCreator.js";
+import CsvCreator from "../models/CsvCreator.js";
 import CSVUploadReport from "../models/CSVUploadReport.js";
 import { io } from "../server.js";
 
@@ -200,25 +200,25 @@ export const uploadCreatorsCSV = async (req, res) => {
           for (let i = 0; i < creators.length; i++) {
           const creator = creators[i]
         
-    if (!creator.fullName?.trim()) {
+//     if (!creator.fullName?.trim()) {
 
-    failedRecords++;
+//     failedRecords++;
 
-    report.push({
-        row: i + 2,
-        fullName: "",
-        email: creator.email,
-        mobileNumber: creator.mobileNumber,
-        instagramUsername: creator.instagramUsername,
-        youtubeName: creator.youtubeName,
-        status: "Failed",
-        reason: "Full Name is required"
-    });
+//     report.push({
+//         row: i + 2,
+//         fullName: "",
+//         email: creator.email,
+//         phoneNumber: creator.phoneNumber,
+//         instagramUsername: creator.instagramUsername,
+//         youtubeName: creator.youtubeName,
+//         status: "Failed",
+//         reason: "Full Name is required"
+//     });
 
-    continue;
-}
+//     continue;
+// }
 
-if (!creator.email?.trim() && !creator.mobileNumber?.trim()) {
+if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
 
     failedRecords++;
 
@@ -226,9 +226,9 @@ if (!creator.email?.trim() && !creator.mobileNumber?.trim()) {
         row: i + 2,
         fullName: creator.fullName,
         email: "",
-        mobileNumber: "",
+        phoneNumber: "",
         instagramUsername: creator.instagramUsername,
-        youtubeName: creator.youtubeName,
+        youtubeUsername: creator.youtubeUsername,
         status: "Failed",
         reason: "Either Email or Mobile Number is required"
     });
@@ -251,9 +251,9 @@ if (!hasInstagram && !hasYoutube) {
         row: i + 2,
         fullName: creator.fullName,
         email: creator.email,
-        mobileNumber: creator.mobileNumber,
+        phoneNumber: creator.phoneNumber,
         instagramUsername: "",
-        youtubeName: "",
+        youtubeUsername: "",
         status: "Failed",
         reason: "Either Instagram or YouTube details are required"
     });
@@ -277,10 +277,10 @@ try {
 
 
     // If email not found then check mobile
-    if (!existingCreator && creator.mobileNumber?.trim()) {
+    if (!existingCreator && creator.phoneNumber?.trim()) {
 
         existingCreator = await CsvCreator.findOne({
-            mobileNumber: creator.mobileNumber.trim()
+            phoneNumber: creator.phoneNumber.trim()
         });
 
     }
@@ -311,11 +311,11 @@ try {
 
             email: creator.email,
 
-            mobileNumber: creator.mobileNumber,
+            phoneNumber: creator.phoneNumber,
 
             instagramUsername: creator.instagramUsername,
 
-            youtubeName: creator.youtubeName,
+            youtubeUsername: creator.youtubeUsername,
 
 
             status: "Updated",
@@ -346,11 +346,11 @@ try {
 
             email: creator.email,
 
-            mobileNumber: creator.mobileNumber,
+            phoneNumber: creator.phoneNumber,
 
             instagramUsername: creator.instagramUsername,
 
-            youtubeName: creator.youtubeName,
+            youtubeUsername: creator.youtubeUsername,
 
 
             status: "Uploaded",
@@ -379,11 +379,11 @@ catch(error){
 
         email: creator.email,
 
-        mobileNumber: creator.mobileNumber,
+        phoneNumber: creator.phoneNumber,
 
         instagramUsername: creator.instagramUsername,
 
-        youtubeName: creator.youtubeName,
+        youtubeUsername: creator.youtubeUsername,
 
 
         status: "Failed",
@@ -516,7 +516,7 @@ export const deleteCSVCreators = async (req,res)=>{
 
 try{
 
-const result = await Creator.deleteMany({});
+const result = await CsvCreator.deleteMany({});
 
 
 const deletedReports = await CSVUploadReport.deleteMany({});
@@ -561,7 +561,7 @@ try{
 const {id} = req.params;
 
 
-const creator = await Creator.findByIdAndDelete(id);
+const creator = await CsvCreator.findByIdAndDelete(id);
 
 
 
@@ -619,52 +619,56 @@ try{
 
 
 const {
+  search,
 
-search,
+  timestamp,
 
-instagramUsername,
-instagramLink,
+  instagramUsername,
+  instagramProfileLink,
+  instagramFollowersRange,
+  exactFollowers,
 
-followersRange,
-exactFollowers,
+  category,
 
-category,
+  phoneNumber,
+  whatsappNumber,
 
-phoneNumber,
-whatsappNumber,
+  fullName,
+  email,
 
-fullName,
-email,
+  gender,
+  dateOfBirth,
 
-gender,
-dob,
+  campaignType,
+  whatKindOfDealDoYouParticipateIn,
 
-campaignType,
-dealType,
+  languages,
 
-languages,
+  speakingVideoLink,
 
-city,
-state,
-country,
-pincode,
+  fullAddress,
+  landmark,
+  city,
+  state,
+  country,
+  pincode,
 
-youtubeUsername,
-youtubeChannelLink,
-youtubeSubscribersRange,
+  photoLink,
 
+  youtubeUsername,
+  youtubeChannelLink,
+  youtubeSubscribersRange,
 
-isCelebrity,
-celebrityType,
+  areYouATvMoviesOttCelebrity,
+  typeOfCeleb,
 
+  platform,
 
-platform,
+  fetchedFromBrandPage,
+  fetchedForBrand,
+  fetchedDate,
 
-fetchedFromBrandPage,
-fetchedForBrand,
-
-
-hoboUserId,
+  hoboUserId,
 
 
 page=1,
@@ -683,341 +687,223 @@ let filter={};
 // GLOBAL SEARCH
 // =====================
 
-if(search){
+// =====================
+// GLOBAL SEARCH
+// =====================
 
-filter.$or=[
-
-
-{
-fullName:{
-$regex:search,
-$options:"i"
-}
-},
-
-
-{
-email:{
-$regex:search,
-$options:"i"
-}
-},
-
-
-{
-instagramUsername:{
-$regex:search,
-$options:"i"
-}
-},
-
-
-{
-youtubeUsername:{
-$regex:search,
-$options:"i"
-}
-},
-
-
-{
-mobileNumber:{
-$regex:search,
-$options:"i"
-}
-},
-
-
-{
-city:{
-$regex:search,
-$options:"i"
-}
+if (search) {
+  filter.$or = [
+    { fullName: { $regex: search, $options: "i" } },
+    { email: { $regex: search, $options: "i" } },
+    { instagramUsername: { $regex: search, $options: "i" } },
+    { youtubeUsername: { $regex: search, $options: "i" } },
+    { phoneNumber: { $regex: search, $options: "i" } },
+    { whatsappNumber: { $regex: search, $options: "i" } },
+    { city: { $regex: search, $options: "i" } },
+    { state: { $regex: search, $options: "i" } },
+    { country: { $regex: search, $options: "i" } },
+  ];
 }
 
+// =====================
+// TIMESTAMP
+// =====================
 
-
-];
-
-}
-
-
-
-
+if (timestamp)
+  filter.timestamp = {
+    $regex: timestamp,
+    $options: "i",
+  };
 
 // =====================
 // INSTAGRAM
 // =====================
 
+if (instagramUsername)
+  filter.instagramUsername = {
+    $regex: instagramUsername,
+    $options: "i",
+  };
 
-if(instagramUsername)
-filter.instagramUsername={
-$regex:instagramUsername,
-$options:"i"
-};
+if (instagramProfileLink)
+  filter.instagramProfileLink = {
+    $regex: instagramProfileLink,
+    $options: "i",
+  };
 
+if (instagramFollowersRange)
+  filter.instagramFollowersRange = instagramFollowersRange;
 
-
-if(instagramLink)
-filter.instagramLink={
-$regex:instagramLink,
-$options:"i"
-};
-
-
-
-
-// =====================
-// FOLLOWERS
-// =====================
-
-
-if(followersRange)
-filter.followersRange=followersRange;
-
-
-
-if(exactFollowers)
-filter.exactFollowers=exactFollowers;
-
-
-
+if (exactFollowers)
+  filter.exactFollowers = Number(exactFollowers);
 
 // =====================
 // PERSONAL
 // =====================
 
+if (fullName)
+  filter.fullName = {
+    $regex: fullName,
+    $options: "i",
+  };
 
-if(fullName)
-filter.fullName={
-$regex:fullName,
-$options:"i"
-};
+if (email)
+  filter.email = {
+    $regex: email,
+    $options: "i",
+  };
 
+if (gender)
+  filter.gender = gender;
 
-
-if(email)
-filter.email={
-$regex:email,
-$options:"i"
-};
-
-
-
-if(gender)
-filter.gender=gender;
-
-
-
-if(dob)
-filter.dob=dob;
-
-
-
-
+if (dateOfBirth)
+  filter.dateOfBirth = dateOfBirth;
 
 // =====================
 // CONTACT
 // =====================
 
+if (phoneNumber)
+  filter.phoneNumber = {
+    $regex: phoneNumber,
+    $options: "i",
+  };
 
-if(phoneNumber)
-filter.phoneNumber={
-$regex:phoneNumber,
-$options:"i"
-};
-
-
-
-if(whatsappNumber)
-filter.whatsappNumber={
-$regex:whatsappNumber,
-$options:"i"
-};
-
-
-
-
-
+if (whatsappNumber)
+  filter.whatsappNumber = {
+    $regex: whatsappNumber,
+    $options: "i",
+  };
 
 // =====================
 // CATEGORY
 // =====================
 
-
-if(category)
-filter.categories={
-$in:[
-category
-]
-};
-
-
-
-
-
+if (category)
+  filter.categories = {
+    $in: [category],
+  };
 
 // =====================
 // CAMPAIGN
 // =====================
 
+if (campaignType)
+  filter.campaignType = {
+    $in: [campaignType],
+  };
 
-if(campaignType)
-filter.campaignTypes={
-$in:[
-campaignType
-]
-};
+if (whatKindOfDealDoYouParticipateIn)
+  filter.whatKindOfDealDoYouParticipateIn = {
+    $regex: whatKindOfDealDoYouParticipateIn,
+    $options: "i",
+  };
 
+// =====================
+// LANGUAGES
+// =====================
 
-
-
-if(dealType)
-filter.dealType={
-$regex:dealType,
-$options:"i"
-};
-
-
-
-
-
+if (language)
+  filter.languages = {
+    $in: [language],
+  };
 
 // =====================
 // LOCATION
 // =====================
 
+if (city)
+  filter.city = {
+    $regex: city,
+    $options: "i",
+  };
 
-if(city)
-filter.city={
-$regex:city,
-$options:"i"
-};
+if (state)
+  filter.state = {
+    $regex: state,
+    $options: "i",
+  };
 
+if (country)
+  filter.country = {
+    $regex: country,
+    $options: "i",
+  };
 
+if (pincode)
+  filter.pincode = pincode;
 
-if(state)
-filter.state={
-$regex:state,
-$options:"i"
-};
+if (landmark)
+  filter.landmark = {
+    $regex: landmark,
+    $options: "i",
+  };
 
-
-
-if(country)
-filter.country={
-$regex:country,
-$options:"i"
-};
-
-
-
-if(pincode)
-filter.pincode=pincode;
-
-
-
-
-
+if (fullAddress)
+  filter.fullAddress = {
+    $regex: fullAddress,
+    $options: "i",
+  };
 
 // =====================
 // YOUTUBE
 // =====================
 
+if (youtubeUsername)
+  filter.youtubeUsername = {
+    $regex: youtubeUsername,
+    $options: "i",
+  };
 
-if(youtubeUsername)
-filter.youtubeUsername={
-$regex:youtubeUsername,
-$options:"i"
-};
+if (youtubeChannelLink)
+  filter.youtubeChannelLink = {
+    $regex: youtubeChannelLink,
+    $options: "i",
+  };
 
-
-
-if(youtubeChannelLink)
-filter.youtubeChannelLink={
-$regex:youtubeChannelLink,
-$options:"i"
-};
-
-
-
-if(youtubeSubscribersRange)
-filter.youtubeSubscribersRange=
-youtubeSubscribersRange;
-
-
-
-
-
-
-
+if (youtubeSubscribersRange)
+  filter.youtubeSubscribersRange = youtubeSubscribersRange;
 
 // =====================
 // CELEBRITY
 // =====================
 
+if (areYouATvMoviesOttCelebrity)
+  filter.areYouATvMoviesOttCelebrity = areYouATvMoviesOttCelebrity;
 
-if(isCelebrity)
-filter.isCelebrity=isCelebrity;
-
-
-
-if(celebrityType)
-filter.celebrityType={
-$regex:celebrityType,
-$options:"i"
-};
-
-
-
-
-
-
+if (typeOfCeleb)
+  filter.typeOfCeleb = {
+    $regex: typeOfCeleb,
+    $options: "i",
+  };
 
 // =====================
 // PLATFORM
 // =====================
 
+if (platform)
+  filter.platform = {
+    $regex: platform,
+    $options: "i",
+  };
 
-if(platform)
-filter.platform={
-$regex:platform,
-$options:"i"
-};
+if (fetchedFromBrandPage)
+  filter.fetchedFromBrandPage = fetchedFromBrandPage;
 
+if (fetchedForBrand)
+  filter.fetchedForBrand = {
+    $regex: fetchedForBrand,
+    $options: "i",
+  };
 
+if (fetchedDate)
+  filter.fetchedDate = {
+    $regex: fetchedDate,
+    $options: "i",
+  };
 
-
-
-
-// =====================
-// BRAND FETCH DATA
-// =====================
-
-
-if(fetchedFromBrandPage)
-filter.fetchedFromBrandPage=fetchedFromBrandPage;
-
-
-
-if(fetchedForBrand)
-filter.fetchedForBrand={
-$regex:fetchedForBrand,
-$options:"i"
-};
-
-
-
-
-
-
-// =====================
-// HOBO USER
-// =====================
-
-
-if(hoboUserId)
-filter.hoboUserId=hoboUserId;
+if (hoboUserId)
+  filter.hoboUserId = hoboUserId;
 
 
 

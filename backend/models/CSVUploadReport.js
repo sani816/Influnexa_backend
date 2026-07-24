@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const csvUploadReportSchema = new mongoose.Schema(
   {
+    fileName: {
+      type: String,
+      default: "",
+    },
+
     totalRecords: {
       type: Number,
       default: 0,
@@ -19,69 +24,243 @@ const csvUploadReportSchema = new mongoose.Schema(
 
     report: [
       {
-        row: Number,
+        row: {
+          type: Number,
+        },
 
-        // Upload Status
-        status: String, // Uploaded / Failed
-        reason: String,
+        status: {
+          type: String,
+          default: "",
+        },
 
-        // Instagram
-        instagramUsername: String,
-        instagramLink: String,
-        followersRange: Number,
+        reason: {
+          type: String,
+          default: "",
+        },
 
-        // Personal
-        fullName: String,
-        email: String,
-        mobileNumber: String,
-        whatsappNumber: String,
-        gender: String,
-        dob: String,
+        // ======================
+        // CSV CREATOR FIELDS
+        // ======================
 
-        // Categories
-        preferredCategory: {
+        timestamp: {
+          type: String,
+          default: "",
+        },
+
+        instagramUsername: {
+          type: String,
+          default: "",
+        },
+
+        instagramProfileLink: {
+          type: String,
+          default: "",
+        },
+
+        instagramFollowersRange: {
+          type: String,
+          default: "",
+        },
+
+        exactFollowers: {
+          type: Number,
+          default: 0,
+        },
+
+        categories: {
           type: [String],
           default: [],
         },
 
-        campaignTypes: {
+        phoneNumber: {
+          type: String,
+          default: "",
+        },
+
+        whatsappNumber: {
+          type: String,
+          default: "",
+        },
+
+        fullName: {
+          type: String,
+          default: "",
+        },
+
+        email: {
+          type: String,
+          default: "",
+        },
+
+        gender: {
+          type: String,
+          default: "",
+        },
+
+        dateOfBirth: {
+          type: String,
+          default: "",
+        },
+
+        campaignType: {
           type: [String],
           default: [],
         },
 
-        // Pricing
-        reelRate: String,
-        storyRate: String,
-        postRate: String,
+        whatKindOfDealDoYouParticipateIn: {
+          type: String,
+          default: "",
+        },
 
-        ytVideoRate: String,
-        ytShortsRate: String,
+        languages: {
+          type: [String],
+          default: [],
+        },
 
-        // YouTube
-        youtubeName: String,
-        youtubeLink: String,
-        youtubeSubs: Number,
+        speakingVideoLink: {
+          type: String,
+          default: "",
+        },
 
-        // Address
-        address1: String,
-        address2: String,
-        city: String,
-        state: String,
-        pincode: String,
+        fullAddress: {
+          type: String,
+          default: "",
+        },
 
-        addressType: String,
-        canReceiveProducts: String,
+        landmark: {
+          type: String,
+          default: "",
+        },
 
-        // Brand
-        brandNames: String,
+        city: {
+          type: String,
+          default: "",
+        },
 
-        // Image
-        image: String,
+        state: {
+          type: String,
+          default: "",
+        },
 
-        // Consent
-        consent1: Boolean,
-        consent2: Boolean,
-        consent3: Boolean,
+        country: {
+          type: String,
+          default: "",
+        },
+
+        pincode: {
+          type: String,
+          default: "",
+        },
+
+        photoLink: {
+          type: String,
+          default: "",
+        },
+
+        youtubeUsername: {
+          type: String,
+          default: "",
+        },
+
+        youtubeChannelLink: {
+          type: String,
+          default: "",
+        },
+
+        youtubeSubscribersRange: {
+          type: String,
+          default: "",
+        },
+
+        commercialsFor1InstagramReel: {
+          type: Number,
+          default: 0,
+        },
+
+        commercialsFor1InstagramStory: {
+          type: Number,
+          default: 0,
+        },
+
+        commercialsFor1InstagramPost: {
+          type: Number,
+          default: 0,
+        },
+
+        commercialsFor1DedicatedYouTubeVideo: {
+          type: Number,
+          default: 0,
+        },
+
+        commercialsFor1IntegratedYouTubeVideo: {
+          type: Number,
+          default: 0,
+        },
+
+        commercialsFor1DedicatedYouTubeShortsVideo: {
+          type: Number,
+          default: 0,
+        },
+
+        commercialsFor1IntegratedYouTubeShortsVideo: {
+          type: Number,
+          default: 0,
+        },
+
+        anyMessageForUs: {
+          type: String,
+          default: "",
+        },
+
+        bio: {
+          type: String,
+          default: "",
+        },
+
+        areYouATvMoviesOttCelebrity: {
+          type: String,
+          default: "",
+        },
+
+        typeOfCeleb: {
+          type: String,
+          default: "",
+        },
+
+        whatAllPlatformsAreYouAvailableOn: {
+          type: [String],
+          default: [],
+        },
+
+        howManyAmazonReviewsYouDoPerMonth: {
+          type: Number,
+          default: 0,
+        },
+
+        fetchedFromBrandPage: {
+          type: String,
+          default: "",
+        },
+
+        fetchedForBrand: {
+          type: String,
+          default: "",
+        },
+
+        platform: {
+          type: String,
+          default: "",
+        },
+
+        fetchedDate: {
+          type: String,
+          default: "",
+        },
+
+        hoboUserId: {
+          type: String,
+          default: "",
+        },
       },
     ],
   },
