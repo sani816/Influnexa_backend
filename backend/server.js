@@ -71,10 +71,8 @@ app.use("/api/admin", adminRoutes);
 
 app.use("/api/bookings", bookingRoutes);
  app.use("/api/blogs",blogRoutes)
- app.use(
- "/api/csv",
- csvRoutes
-);
+ console.log("CSV ROUTE REGISTERED");
+app.use("/api/csv-creators", csvRoutes);
 
 // static uploads
 // app.use("/uploads", express.static("uploads"));
