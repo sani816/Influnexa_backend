@@ -196,6 +196,7 @@ export const uploadCreatorsCSV = async (req, res) => {
 
          let totalRecords = creators.length;
          let successfulRecords = 0;
+         let updatedRecords = 0;
           let failedRecords = 0;
           for (let i = 0; i < creators.length; i++) {
           const creator = creators[i]
@@ -300,7 +301,7 @@ try {
         await existingCreator.save();
 
 
-        successfulRecords++;
+        updatedRecords++;
 
 
         report.push({
@@ -628,7 +629,7 @@ const {
   instagramFollowersRange,
   exactFollowers,
 
-  category,
+  categories,
 
   phoneNumber,
   whatsappNumber,
@@ -641,7 +642,7 @@ const {
 
   campaignType,
   whatKindOfDealDoYouParticipateIn,
-
+whatAllPlatformsAreYouAvailableOn,
   languages,
 
   speakingVideoLink,
@@ -658,6 +659,18 @@ const {
   youtubeUsername,
   youtubeChannelLink,
   youtubeSubscribersRange,
+
+commercialsFor1InstagramReel,
+commercialsFor1InstagramStory,
+commercialsFor1InstagramPost,
+commercialsFor1DedicatedYouTubeVideo,
+commercialsFor1IntegratedYouTubeVideo,
+commercialsFor1DedicatedYouTubeShortsVideo,
+commercialsFor1IntegratedYouTubeShortsVideo,
+
+howManyAmazonReviewsYouDoPerMonth,
+anyMessageForUs,
+bio,
 
   areYouATvMoviesOttCelebrity,
   typeOfCeleb,
@@ -759,6 +772,12 @@ if (gender)
 if (dateOfBirth)
   filter.dateOfBirth = dateOfBirth;
 
+if (photoLink) {
+    filter.photoLink = {
+        $regex: photoLink,
+        $options: "i"
+    };
+}
 // =====================
 // CONTACT
 // =====================
@@ -779,9 +798,9 @@ if (whatsappNumber)
 // CATEGORY
 // =====================
 
-if (category)
+if (categories)
   filter.categories = {
-    $in: [category],
+    $in: [categories],
   };
 
 // =====================
@@ -803,9 +822,9 @@ if (whatKindOfDealDoYouParticipateIn)
 // LANGUAGES
 // =====================
 
-if (language)
+if (languages)
   filter.languages = {
-    $in: [language],
+    $in: [languages],
   };
 
 // =====================
@@ -860,7 +879,12 @@ if (youtubeChannelLink)
     $regex: youtubeChannelLink,
     $options: "i",
   };
-
+if (speakingVideoLink) {
+    filter.speakingVideoLink = {
+        $regex: speakingVideoLink,
+        $options: "i"
+    };
+}
 if (youtubeSubscribersRange)
   filter.youtubeSubscribersRange = youtubeSubscribersRange;
 
@@ -871,6 +895,11 @@ if (youtubeSubscribersRange)
 if (areYouATvMoviesOttCelebrity)
   filter.areYouATvMoviesOttCelebrity = areYouATvMoviesOttCelebrity;
 
+if (whatAllPlatformsAreYouAvailableOn) {
+    filter.whatAllPlatformsAreYouAvailableOn = {
+        $in: whatAllPlatformsAreYouAvailableOn.split(","),
+    };
+}
 if (typeOfCeleb)
   filter.typeOfCeleb = {
     $regex: typeOfCeleb,
@@ -906,7 +935,49 @@ if (hoboUserId)
   filter.hoboUserId = hoboUserId;
 
 
+if (commercialsFor1InstagramReel)
+    filter.commercialsFor1InstagramReel =
+        Number(commercialsFor1InstagramReel);
 
+if (commercialsFor1InstagramStory)
+    filter.commercialsFor1InstagramStory =
+        Number(commercialsFor1InstagramStory);
+
+if (commercialsFor1InstagramPost)
+    filter.commercialsFor1InstagramPost =
+        Number(commercialsFor1InstagramPost);
+
+if (commercialsFor1DedicatedYouTubeVideo)
+    filter.commercialsFor1DedicatedYouTubeVideo =
+        Number(commercialsFor1DedicatedYouTubeVideo);
+
+if (commercialsFor1IntegratedYouTubeVideo)
+    filter.commercialsFor1IntegratedYouTubeVideo =
+        Number(commercialsFor1IntegratedYouTubeVideo);
+
+if (commercialsFor1DedicatedYouTubeShortsVideo)
+    filter.commercialsFor1DedicatedYouTubeShortsVideo =
+        Number(commercialsFor1DedicatedYouTubeShortsVideo);
+
+if (commercialsFor1IntegratedYouTubeShortsVideo)
+    filter.commercialsFor1IntegratedYouTubeShortsVideo =
+        Number(commercialsFor1IntegratedYouTubeShortsVideo);
+
+if (howManyAmazonReviewsYouDoPerMonth)
+    filter.howManyAmazonReviewsYouDoPerMonth =
+        Number(howManyAmazonReviewsYouDoPerMonth);
+
+if (anyMessageForUs)
+    filter.anyMessageForUs = {
+        $regex: anyMessageForUs,
+        $options: "i",
+    };
+
+if (bio)
+    filter.bio = {
+        $regex: bio,
+        $options: "i",
+    };
 
 
 
@@ -914,8 +985,10 @@ if (hoboUserId)
 // =====================
 
 
-const skip =
-(page-1)*limit;
+const pageNumber = Number(page);
+const limitNumber = Number(limit);
+
+const skip = (pageNumber - 1) * limitNumber;
 
 
 
@@ -926,7 +999,7 @@ await CsvCreator
 createdAt:-1
 })
 .skip(skip)
-.limit(Number(limit));
+.limit(limitNumber);
 
 
 
