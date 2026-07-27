@@ -268,104 +268,168 @@ if (!hasInstagram && !hasYoutube) {
 
 try {
 
-    let existingCreator = null;
+let existingCreator = null;
 
 
-    // Check existing creator by email
-    if (creator.email?.trim()) {
+// Check email
+if(creator.email?.trim()){
 
-        existingCreator = await CsvCreator.findOne({
-            email: creator.email.trim()
-        });
+    existingCreator = await CsvCreator.findOne({
+        email: creator.email.trim()
+    });
 
-    }
-
-
-    // If email not found then check mobile
-    if (!existingCreator && creator.phoneNumber?.trim()) {
-
-        existingCreator = await CsvCreator.findOne({
-            phoneNumber: creator.phoneNumber.trim()
-        });
-
-    }
+}
 
 
+// Check mobile if email not found
 
-    // UPDATE EXISTING CREATOR
-    if (existingCreator) {
+if(!existingCreator && creator.phoneNumber?.trim()){
 
+    existingCreator = await CsvCreator.findOne({
+        phoneNumber: creator.phoneNumber.trim()
+    });
 
-        Object.assign(
-            existingCreator,
-            creator
-        );
-
-
-        await existingCreator.save();
+}
 
 
-        updatedRecords++;
+
+// ===============================
+// EXISTING USER
+// ===============================
+
+if(existingCreator){
 
 
-        report.push({
-
-            row: i + 2,
-
-            fullName: creator.fullName,
-
-            email: creator.email,
-
-            phoneNumber: creator.phoneNumber,
-
-            instagramUsername: creator.instagramUsername,
-
-            youtubeUsername: creator.youtubeUsername,
+let isUpdated = false;
+let changedFields=[];
 
 
-            status: "Updated",
-
-            reason: "Existing creator updated with latest CSV data"
-
-        });
+Object.keys(creator).forEach((key)=>{
 
 
-    }
+let oldValue = existingCreator[key];
+let newValue = creator[key];
 
 
-    // CREATE NEW CREATOR
-    else {
+// Array comparison
+if(Array.isArray(oldValue)){
+oldValue = JSON.stringify(oldValue);
+}
+
+if(Array.isArray(newValue)){
+newValue = JSON.stringify(newValue);
+}
 
 
-        await CsvCreator.create(creator);
+
+if(
+newValue !== "" &&
+String(oldValue) !== String(newValue)
+){
+
+existingCreator[key]=creator[key];
+
+isUpdated=true;
+
+changedFields.push(key);
+
+}
 
 
-        successfulRecords++;
+});
 
 
-        report.push({
 
-            row: i + 2,
+// Only save if something changed
 
-            fullName: creator.fullName,
+if(isUpdated){
 
-            email: creator.email,
+await existingCreator.save();
 
-            phoneNumber: creator.phoneNumber,
-
-            instagramUsername: creator.instagramUsername,
-
-            youtubeUsername: creator.youtubeUsername,
+updatedRecords++;
 
 
-            status: "Uploaded",
+report.push({
 
-            reason: "New creator added successfully"
+row:i+2,
 
-        });
+fullName:creator.fullName,
+
+email:creator.email,
+
+phoneNumber:creator.phoneNumber,
+
+status:"Updated",
+
+reason:
+`Updated fields: ${changedFields.join(", ")}`
+
+});
 
 
-    }
+}
+
+else{
+
+
+// Same data no update
+
+report.push({
+
+row:i+2,
+
+fullName:creator.fullName,
+
+email:creator.email,
+
+phoneNumber:creator.phoneNumber,
+
+status:"Skipped",
+
+reason:"No changes found"
+
+});
+
+
+}
+
+
+
+}
+
+
+
+// ===============================
+// NEW USER
+// ===============================
+
+else{
+
+
+await CsvCreator.create(creator);
+
+
+successfulRecords++;
+
+
+report.push({
+
+row:i+2,
+
+fullName:creator.fullName,
+
+email:creator.email,
+
+phoneNumber:creator.phoneNumber,
+
+status:"Uploaded",
+
+reason:"New creator added"
+
+});
+
+
+}
 
 
 
@@ -373,31 +437,21 @@ try {
 catch(error){
 
 
-    failedRecords++;
+failedRecords++;
 
 
-    report.push({
+report.push({
 
-        row: i + 2,
+row:i+2,
 
-        fullName: creator.fullName,
+status:"Failed",
 
-        email: creator.email,
+reason:error.message
 
-        phoneNumber: creator.phoneNumber,
-
-        instagramUsername: creator.instagramUsername,
-
-        youtubeUsername: creator.youtubeUsername,
+});
 
 
-        status: "Failed",
-
-        reason: error.message
-
-    });
-  }
-
+}
 }
 // SAVE REPORT PERMANENTLY
 const savedReport = await CSVUploadReport.create({
@@ -407,6 +461,7 @@ const savedReport = await CSVUploadReport.create({
     totalRecords,
 
     successfulRecords,
+    updatedRecords,
 
     failedRecords,
 
