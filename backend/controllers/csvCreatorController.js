@@ -5,6 +5,64 @@ import CSVUploadReport from "../models/CSVUploadReport.js";
 
 import { io } from "../server.js";
 
+
+
+// =============================
+// CLEAN DATA FUNCTIONS
+// =============================
+
+const cleanText = (value)=>{
+
+    if(!value) return "";
+
+    return String(value)
+    .trim();
+
+};
+
+
+
+const cleanEmail = (value)=>{
+
+    if(!value) return "";
+
+    return String(value)
+    .trim()
+    .toLowerCase();
+
+};
+
+
+
+const cleanPhone = (value)=>{
+
+    if(!value) return "";
+
+
+    let phone = String(value)
+    .trim()
+    .replace(/\s+/g,"")
+    .replace(".0","");
+
+
+    // Fix Excel scientific notation
+
+    if(phone.includes("E") || phone.includes("e")){
+
+        phone = Number(phone)
+        .toFixed(0);
+
+    }
+
+
+    // remove country code
+
+    phone = phone.replace("+91","");
+
+
+    return phone;
+
+};
 // ==========================
 // UPLOAD CSV
 // ==========================
@@ -50,13 +108,13 @@ export const uploadCreatorsCSV = async (req, res) => {
                 .map((item) => item.trim())
             : [],
 
-          phoneNumber: row["Phone Number"] || "",
+          phoneNumber: cleanPhone(row["Phone Number"]) || "",
 
-          whatsappNumber: row["Whatsapp Number"] || "",
+          whatsappNumber: cleanPhone(row["Whatsapp Number"])|| "",
 
-          fullName: row["Full Name"] || "",
+          fullName: cleanText(row["Full Name"] )|| "",
 
-          email: row["Email"] || "",
+          email:cleanEmail (row["Email"]) || "",
 
           gender: row["Gender"] || "",
 
@@ -271,23 +329,55 @@ try {
 let existingCreator = null;
 
 
-// Check email
-if(creator.email?.trim()){
+const email = cleanEmail(
+    creator.email
+);
 
-    existingCreator = await CsvCreator.findOne({
-        email: creator.email.trim()
-    });
+
+const phone = cleanPhone(
+    creator.phoneNumber
+);
+
+
+
+let searchCondition=[];
+
+
+
+if(email){
+
+searchCondition.push({
+
+email:email
+
+});
 
 }
 
 
-// Check mobile if email not found
 
-if(!existingCreator && creator.phoneNumber?.trim()){
+if(phone){
 
-    existingCreator = await CsvCreator.findOne({
-        phoneNumber: creator.phoneNumber.trim()
-    });
+searchCondition.push({
+
+phoneNumber:phone
+
+});
+
+}
+
+
+
+if(searchCondition.length>0){
+
+
+existingCreator =
+await CsvCreator.findOne({
+
+$or:searchCondition
+
+});
+
 
 }
 
@@ -309,7 +399,23 @@ Object.keys(creator).forEach((key)=>{
 
 let oldValue = existingCreator[key];
 let newValue = creator[key];
+if(key==="phoneNumber"){
 
+oldValue = cleanPhone(oldValue);
+
+newValue = cleanPhone(newValue);
+
+}
+
+
+
+if(key==="email"){
+
+oldValue = cleanEmail(oldValue);
+
+newValue = cleanEmail(newValue);
+
+}
 
 // Array comparison
 if(Array.isArray(oldValue)){
@@ -418,9 +524,15 @@ row:i+2,
 
 fullName:creator.fullName,
 
-email:creator.email,
+email =
+cleanEmail(
+creator.email
+),
 
-phoneNumber:creator.phoneNumber,
+phoneNumber =
+cleanPhone(
+creator.phoneNumber
+),
 
 status:"Uploaded",
 
