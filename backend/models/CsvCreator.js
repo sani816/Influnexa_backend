@@ -17,13 +17,19 @@ const csvCreatorSchema = new mongoose.Schema(
       default: [],
     },
 
-    phoneNumber: { type: String, default: "" ,index:true},
+    phoneNumber: { type: String, default: "",index:true,sparse:true },
 
-    whatsappNumber: { type: String, default: "" ,index:true},
+    whatsappNumber: { type: String, default: "" ,index:true,sparse:true},
 
     fullName: { type: String, default: "" },
 
-    email: { type: String, default: "" ,index:true},
+    email:{
+ type:String,
+ default:undefined,
+ lowercase:true,
+ trim:true,
+ sparse:true,
+},
 
     gender: { type: String, default: "" },
 

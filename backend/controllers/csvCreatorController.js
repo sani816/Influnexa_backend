@@ -42,7 +42,7 @@ const cleanPhone = (value)=>{
     let phone = String(value)
     .trim()
     .replace(/\s+/g,"")
-    .replace(".0","");
+   .replace(/\.0$/,"");
 
 
     // Fix Excel scientific notation
@@ -444,13 +444,24 @@ newValue.sort()
 
 
 
+if(key==="phoneNumber" || key==="whatsappNumber"){
+
+oldValue = cleanPhone(oldValue);
+newValue = cleanPhone(newValue);
+
+}
+else{
+
 oldValue = String(oldValue || "")
-.trim();
+.trim()
+.toLowerCase();
 
 
 newValue = String(newValue || "")
-.trim();
+.trim()
+.toLowerCase();
 
+}
 
 
 if(newValue && oldValue !== newValue){
