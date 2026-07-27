@@ -11,13 +11,20 @@ import { io } from "../server.js";
 // CLEAN DATA FUNCTIONS
 // =============================
 
-const cleanText = (value)=>{
+const cleanText = (value) => {
+    if (value === null || value === undefined) return "";
 
-    if(!value) return "";
+    const text = String(value).trim();
 
-    return String(value)
-    .trim();
+    if (
+        text === "" ||
+        text.toLowerCase() === "null" ||
+        text.toLowerCase() === "undefined"
+    ) {
+        return "";
+    }
 
+    return text;
 };
 
 
@@ -34,31 +41,33 @@ const cleanEmail = (value)=>{
 
 
 
-const cleanPhone=(value)=>{
+const cleanPhone = (value)=>{
 
-if(!value)
-return "";
-
-
-let phone=String(value)
-.trim()
-.replace(/\s+/g,"");
+    if(!value) return "";
 
 
-if(phone.includes("E") || phone.includes("e")){
-
-phone=Number(phone).toFixed(0);
-
-}
-
-
-phone=phone.replace(/\.0$/,"");
+    let phone = String(value)
+    .trim()
+    .replace(/\s+/g,"")
+   .replace(/\.0$/,"");
 
 
-phone=phone.replace("+91","");
+    // Fix Excel scientific notation
+
+    if(phone.includes("E") || phone.includes("e")){
+
+        phone = Number(phone)
+        .toFixed(0);
+
+    }
 
 
-return phone;
+    // remove country code
+
+    phone = phone.replace("+91","");
+
+
+    return phone;
 
 };
 // ==========================
@@ -297,14 +306,13 @@ if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
     continue;
 }
  const hasInstagram =
-    creator.instagramUsername ||
-    creator.instagramProfileLink;
+    cleanText(creator.instagramUsername) !== "" 
+
 
 const hasYoutube =
-    creator.youtubeUsername ||
-    creator.youtubeChannelLink;
+    cleanText(creator.youtubeUsername) !== "" 
 
-if (!hasInstagram && !hasYoutube) {
+if (!hasInstagram?.trim() && !hasYoutube?.trim()) {
 
     failedRecords++;
 
@@ -313,15 +321,14 @@ if (!hasInstagram && !hasYoutube) {
         fullName: creator.fullName,
         email: creator.email,
         phoneNumber: creator.phoneNumber,
-        instagramUsername: "",
-        youtubeUsername: "",
+        instagramUsername: creator.instagramUsername,
+        youtubeUsername: creator.youtubeUsername,
         status: "Failed",
         reason: "Either Instagram or YouTube details are required"
     });
 
     continue;
 }
-
 try {
 
 let existingCreator = null;
@@ -336,19 +343,8 @@ const phone = cleanPhone(
     creator.phoneNumber
 );
 
-const instagramUsername = cleanText(
-  creator.instagramUsername
-).toLowerCase();
 
 
-if (!existingCreator && instagramUsername) {
-    existingCreator = await CsvCreator.findOne({
-        instagramUsername: {
-            $regex: `^${instagramUsername}$`,
-            $options: "i"
-        }
-    });
-}
 
 
 // First check email
