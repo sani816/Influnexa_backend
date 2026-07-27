@@ -34,33 +34,31 @@ const cleanEmail = (value)=>{
 
 
 
-const cleanPhone = (value)=>{
+const cleanPhone=(value)=>{
 
-    if(!value) return "";
-
-
-    let phone = String(value)
-    .trim()
-    .replace(/\s+/g,"")
-   .replace(/\.0$/,"");
+if(!value)
+return "";
 
 
-    // Fix Excel scientific notation
-
-    if(phone.includes("E") || phone.includes("e")){
-
-        phone = Number(phone)
-        .toFixed(0);
-
-    }
+let phone=String(value)
+.trim()
+.replace(/\s+/g,"");
 
 
-    // remove country code
+if(phone.includes("E") || phone.includes("e")){
 
-    phone = phone.replace("+91","");
+phone=Number(phone).toFixed(0);
+
+}
 
 
-    return phone;
+phone=phone.replace(/\.0$/,"");
+
+
+phone=phone.replace("+91","");
+
+
+return phone;
 
 };
 // ==========================
@@ -338,8 +336,19 @@ const phone = cleanPhone(
     creator.phoneNumber
 );
 
+const instagramUsername = cleanText(
+  creator.instagramUsername
+).toLowerCase();
 
 
+if (!existingCreator && instagramUsername) {
+    existingCreator = await CsvCreator.findOne({
+        instagramUsername: {
+            $regex: `^${instagramUsername}$`,
+            $options: "i"
+        }
+    });
+}
 
 
 // First check email
@@ -347,7 +356,10 @@ const phone = cleanPhone(
 if(email){
 
 existingCreator = await CsvCreator.findOne({
-    email: email
+ email:{
+   $regex:`^${email}$`,
+   $options:"i"
+ }
 });
 
 }
