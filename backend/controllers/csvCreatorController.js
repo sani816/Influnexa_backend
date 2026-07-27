@@ -312,7 +312,7 @@ if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
 const hasYoutube =
     cleanText(creator.youtubeUsername) !== "" 
 
-if (!hasInstagram?.trim() && !hasYoutube?.trim()) {
+if (!hasInstagram && !hasYoutube) {
 
     failedRecords++;
 
@@ -370,7 +370,20 @@ existingCreator = await CsvCreator.findOne({
 });
 
 }
+const instagramUsername = cleanText(
+    creator.instagramUsername
+).toLowerCase();
 
+if (!existingCreator && instagramUsername) {
+
+    existingCreator = await CsvCreator.findOne({
+        instagramUsername: {
+            $regex: `^${instagramUsername}$`,
+            $options: "i"
+        }
+    });
+
+}
 
 // ===============================
 // EXISTING USER
@@ -471,21 +484,15 @@ newValue = String(newValue || "")
 
 }
 
+if (oldValue !== newValue) {
 
-if(newValue && oldValue !== newValue){
+    existingCreator[key] = creator[key];
 
+    isUpdated = true;
 
-existingCreator[key]=creator[key];
-
-
-isUpdated=true;
-
-
-changedFields.push(key);
-
+    changedFields.push(key);
 
 }
-
 
 
 });
@@ -509,6 +516,8 @@ fullName:creator.fullName,
 email:creator.email,
 
 phoneNumber:creator.phoneNumber,
+instagramUsername: creator.instagramUsername,
+youtubeUsername: creator.youtubeUsername,
 
 status:"Updated",
 
@@ -534,7 +543,8 @@ fullName:creator.fullName,
 email:creator.email,
 
 phoneNumber:creator.phoneNumber,
-
+instagramUsername: creator.instagramUsername,
+youtubeUsername: creator.youtubeUsername,
 status:"Skipped",
 
 reason:"No changes found"
@@ -578,6 +588,9 @@ phoneNumber:
 cleanPhone(
 creator.phoneNumber
 ),
+
+instagramUsername: creator.instagramUsername,
+youtubeUsername: creator.youtubeUsername,
 status:"Uploaded",
 
 reason:"New creator added"
