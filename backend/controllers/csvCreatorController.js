@@ -340,7 +340,6 @@ const phone = cleanPhone(
 
 
 
-let existingCreator = null;
 
 
 // First check email
