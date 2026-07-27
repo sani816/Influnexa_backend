@@ -7,7 +7,8 @@ import {
   getLatestCSVReport,
   deleteCSVCreators,
   getCsvCreators,
-  deleteCsvCreator
+  deleteCsvCreator,
+  updateCsvCreator,
 } from "../controllers/csvCreatorController.js";
 
 
@@ -35,6 +36,11 @@ router.get(
   getLatestCSVReport
 );
 
+// Update CSV Creator
+router.put(
+  "/:id",
+  updateCsvCreator
+);
 
 // Delete Single CSV Creator
 router.delete(

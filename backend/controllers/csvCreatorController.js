@@ -2,6 +2,7 @@ import fs from "fs";
 import csv from "csv-parser";
 import CsvCreator from "../models/CsvCreator.js";
 import CSVUploadReport from "../models/CSVUploadReport.js";
+
 import { io } from "../server.js";
 
 // ==========================
@@ -285,8 +286,39 @@ try {
         });
 
     }
+// edit csb creators
+
+export const updateCsvCreator = async (req, res) => {
+
+  try {
+
+    const updatedCreator = await CsvCreator.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new:true
+      }
+    );
 
 
+    res.status(200).json({
+      success:true,
+      creator: updatedCreator
+    });
+
+
+  } catch(error){
+
+    console.log("UPDATE CSV ERROR:", error);
+
+    res.status(500).json({
+      success:false,
+      message:error.message
+    });
+
+  }
+
+};
 
     // UPDATE EXISTING CREATOR
     if (existingCreator) {
@@ -620,7 +652,6 @@ try{
 
 
 const {
-  search,
 
   timestamp,
 
@@ -692,292 +723,181 @@ limit=20
 
 
 
-let filter={};
+// ==============================
+// FILTERS
+// ==============================
 
+const filter = {};
 
+// ==============================
+// PERSONAL DETAILS
+// ==============================
 
-// =====================
-// GLOBAL SEARCH
-// =====================
-
-// =====================
-// GLOBAL SEARCH
-// =====================
-
-if (search) {
-  filter.$or = [
-    { fullName: { $regex: search, $options: "i" } },
-    { email: { $regex: search, $options: "i" } },
-    { instagramUsername: { $regex: search, $options: "i" } },
-    { youtubeUsername: { $regex: search, $options: "i" } },
-    { phoneNumber: { $regex: search, $options: "i" } },
-    { whatsappNumber: { $regex: search, $options: "i" } },
-    { city: { $regex: search, $options: "i" } },
-    { state: { $regex: search, $options: "i" } },
-    { country: { $regex: search, $options: "i" } },
-  ];
-}
-
-// =====================
-// TIMESTAMP
-// =====================
-
-if (timestamp)
-  filter.timestamp = {
-    $regex: timestamp,
-    $options: "i",
-  };
-
-// =====================
-// INSTAGRAM
-// =====================
-
-if (instagramUsername)
-  filter.instagramUsername = {
-    $regex: instagramUsername,
-    $options: "i",
-  };
-
-if (instagramProfileLink)
-  filter.instagramProfileLink = {
-    $regex: instagramProfileLink,
-    $options: "i",
-  };
-
-if (instagramFollowersRange)
-  filter.instagramFollowersRange = instagramFollowersRange;
-
-if (exactFollowers)
-  filter.exactFollowers = Number(exactFollowers);
-
-// =====================
-// PERSONAL
-// =====================
-
-if (fullName)
+if (fullName?.trim()) {
   filter.fullName = {
-    $regex: fullName,
+    $regex: fullName.trim(),
     $options: "i",
   };
-
-if (email)
-  filter.email = {
-    $regex: email,
-    $options: "i",
-  };
-
-if (gender)
-  filter.gender = gender;
-
-if (dateOfBirth)
-  filter.dateOfBirth = dateOfBirth;
-
-if (photoLink) {
-    filter.photoLink = {
-        $regex: photoLink,
-        $options: "i"
-    };
 }
-// =====================
-// CONTACT
-// =====================
 
-if (phoneNumber)
+if (email?.trim()) {
+  filter.email = {
+    $regex: email.trim(),
+    $options: "i",
+  };
+}
+
+if (phoneNumber?.trim()) {
   filter.phoneNumber = {
-    $regex: phoneNumber,
+    $regex: phoneNumber.trim(),
     $options: "i",
   };
+}
 
-if (whatsappNumber)
-  filter.whatsappNumber = {
-    $regex: whatsappNumber,
+if (gender) {
+  filter.gender = gender;
+}
+
+// ==============================
+// INSTAGRAM
+// ==============================
+
+if (instagramUsername?.trim()) {
+  filter.instagramUsername = {
+    $regex: instagramUsername.trim(),
     $options: "i",
   };
+}
 
-// =====================
+if (instagramFollowersRange) {
+  switch (instagramFollowersRange) {
+    case "Under 2K":
+      filter.exactFollowers = { $lt: 2000 };
+      break;
+
+    case "2K - 10K":
+      filter.exactFollowers = {
+        $gte: 2000,
+        $lt: 10000,
+      };
+      break;
+
+    case "10K - 50K":
+      filter.exactFollowers = {
+        $gte: 10000,
+        $lt: 50000,
+      };
+      break;
+
+    case "50K - 100K":
+      filter.exactFollowers = {
+        $gte: 50000,
+        $lt: 100000,
+      };
+      break;
+
+    case "100K - 500K":
+      filter.exactFollowers = {
+        $gte: 100000,
+        $lt: 500000,
+      };
+      break;
+
+    case "500K - 1M":
+      filter.exactFollowers = {
+        $gte: 500000,
+        $lt: 1000000,
+      };
+      break;
+
+    case "1M - 5M":
+      filter.exactFollowers = {
+        $gte: 1000000,
+        $lt: 5000000,
+      };
+      break;
+
+    case "5M+":
+      filter.exactFollowers = {
+        $gte: 5000000,
+      };
+      break;
+  }
+}
+
+// ==============================
 // CATEGORY
-// =====================
+// ==============================
 
-if (categories)
+if (categories) {
   filter.categories = {
     $in: [categories],
   };
+}
 
-// =====================
-// CAMPAIGN
-// =====================
+// ==============================
+// LOCATION
+// ==============================
 
-if (campaignType)
-  filter.campaignType = {
-    $in: [campaignType],
-  };
-
-if (whatKindOfDealDoYouParticipateIn)
-  filter.whatKindOfDealDoYouParticipateIn = {
-    $regex: whatKindOfDealDoYouParticipateIn,
+if (city?.trim()) {
+  filter.city = {
+    $regex: city.trim(),
     $options: "i",
   };
+}
 
-// =====================
+if (state) {
+  filter.state = state;
+}
+
+if (country) {
+  filter.country = country;
+}
+
+// ==============================
+// YOUTUBE
+// ==============================
+
+if (youtubeUsername?.trim()) {
+  filter.youtubeUsername = {
+    $regex: youtubeUsername.trim(),
+    $options: "i",
+  };
+}
+
+if (youtubeSubscribersRange) {
+  filter.youtubeSubscribersRange = youtubeSubscribersRange;
+}
+
+// ==============================
+// CELEBRITY
+// ==============================
+
+if (typeOfCeleb) {
+  filter.typeOfCeleb = typeOfCeleb;
+}
+
+// ==============================
+// PLATFORM
+// ==============================
+
+if (platform) {
+  filter.platform = platform;
+}
+
+// ==============================
 // LANGUAGES
-// =====================
+// ==============================
 
-if (languages)
+if (languages) {
   filter.languages = {
     $in: [languages],
   };
-
-// =====================
-// LOCATION
-// =====================
-
-if (city)
-  filter.city = {
-    $regex: city,
-    $options: "i",
-  };
-
-if (state)
-  filter.state = {
-    $regex: state,
-    $options: "i",
-  };
-
-if (country)
-  filter.country = {
-    $regex: country,
-    $options: "i",
-  };
-
-if (pincode)
-  filter.pincode = pincode;
-
-if (landmark)
-  filter.landmark = {
-    $regex: landmark,
-    $options: "i",
-  };
-
-if (fullAddress)
-  filter.fullAddress = {
-    $regex: fullAddress,
-    $options: "i",
-  };
-
-// =====================
-// YOUTUBE
-// =====================
-
-if (youtubeUsername)
-  filter.youtubeUsername = {
-    $regex: youtubeUsername,
-    $options: "i",
-  };
-
-if (youtubeChannelLink)
-  filter.youtubeChannelLink = {
-    $regex: youtubeChannelLink,
-    $options: "i",
-  };
-if (speakingVideoLink) {
-    filter.speakingVideoLink = {
-        $regex: speakingVideoLink,
-        $options: "i"
-    };
 }
-if (youtubeSubscribersRange)
-  filter.youtubeSubscribersRange = youtubeSubscribersRange;
 
-// =====================
-// CELEBRITY
-// =====================
-
-if (areYouATvMoviesOttCelebrity)
-  filter.areYouATvMoviesOttCelebrity = areYouATvMoviesOttCelebrity;
-
-if (whatAllPlatformsAreYouAvailableOn) {
-    filter.whatAllPlatformsAreYouAvailableOn = {
-        $in: whatAllPlatformsAreYouAvailableOn.split(","),
-    };
+if (hoboUserId) {
+  filter.hoboUserId = Number(hoboUserId);
 }
-if (typeOfCeleb)
-  filter.typeOfCeleb = {
-    $regex: typeOfCeleb,
-    $options: "i",
-  };
-
-// =====================
-// PLATFORM
-// =====================
-
-if (platform)
-  filter.platform = {
-    $regex: platform,
-    $options: "i",
-  };
-
-if (fetchedFromBrandPage)
-  filter.fetchedFromBrandPage = fetchedFromBrandPage;
-
-if (fetchedForBrand)
-  filter.fetchedForBrand = {
-    $regex: fetchedForBrand,
-    $options: "i",
-  };
-
-if (fetchedDate)
-  filter.fetchedDate = {
-    $regex: fetchedDate,
-    $options: "i",
-  };
-
-if (hoboUserId)
-  filter.hoboUserId = hoboUserId;
-
-
-if (commercialsFor1InstagramReel)
-    filter.commercialsFor1InstagramReel =
-        Number(commercialsFor1InstagramReel);
-
-if (commercialsFor1InstagramStory)
-    filter.commercialsFor1InstagramStory =
-        Number(commercialsFor1InstagramStory);
-
-if (commercialsFor1InstagramPost)
-    filter.commercialsFor1InstagramPost =
-        Number(commercialsFor1InstagramPost);
-
-if (commercialsFor1DedicatedYouTubeVideo)
-    filter.commercialsFor1DedicatedYouTubeVideo =
-        Number(commercialsFor1DedicatedYouTubeVideo);
-
-if (commercialsFor1IntegratedYouTubeVideo)
-    filter.commercialsFor1IntegratedYouTubeVideo =
-        Number(commercialsFor1IntegratedYouTubeVideo);
-
-if (commercialsFor1DedicatedYouTubeShortsVideo)
-    filter.commercialsFor1DedicatedYouTubeShortsVideo =
-        Number(commercialsFor1DedicatedYouTubeShortsVideo);
-
-if (commercialsFor1IntegratedYouTubeShortsVideo)
-    filter.commercialsFor1IntegratedYouTubeShortsVideo =
-        Number(commercialsFor1IntegratedYouTubeShortsVideo);
-
-if (howManyAmazonReviewsYouDoPerMonth)
-    filter.howManyAmazonReviewsYouDoPerMonth =
-        Number(howManyAmazonReviewsYouDoPerMonth);
-
-if (anyMessageForUs)
-    filter.anyMessageForUs = {
-        $regex: anyMessageForUs,
-        $options: "i",
-    };
-
-if (bio)
-    filter.bio = {
-        $regex: bio,
-        $options: "i",
-    };
 
 
 

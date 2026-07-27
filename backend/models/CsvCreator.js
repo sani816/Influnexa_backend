@@ -185,8 +185,8 @@ const csvCreatorSchema = new mongoose.Schema(
     },
 
     hoboUserId: {
-      type: String,
-      default: "",
+      type: Number,
+      default: null,
     },
   },
   {
@@ -195,7 +195,6 @@ const csvCreatorSchema = new mongoose.Schema(
 );
 
 const CsvCreator =
-  mongoose.models.CsvCreator ||
-  mongoose.model("CsvCreator", csvCreatorSchema);
+  mongoose.models.CsvCreator || mongoose.model("CsvCreator", csvCreatorSchema);
 
 export default CsvCreator;
