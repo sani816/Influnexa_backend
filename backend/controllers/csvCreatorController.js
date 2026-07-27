@@ -896,10 +896,10 @@ if (languages) {
   };
 }
 
-if (hoboUserId?.trim()) {
+if (req.query.hoboUserId) {
   filter.hoboUserId = {
-    $regex: hoboUserId.trim(),
-    $options: "i",
+    $regex: "^" + req.query.hoboUserId,
+    $options: "i"
   };
 }
 
