@@ -184,10 +184,7 @@ const csvCreatorSchema = new mongoose.Schema(
       default: "",
     },
 
-    hoboUserId: {
-      type: Number,
-      default: 0,
-    },
+    hoboUserId: Number(row.hoboUserId) || 0,
   },
   {
     timestamps: true,
