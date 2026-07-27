@@ -285,39 +285,8 @@ try {
         });
 
     }
-// edit csb creators
-
-export const updateCsvCreator = async (req, res) => {
-
-  try {
-
-    const updatedCreator = await CsvCreator.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new:true
-      }
-    );
 
 
-    res.status(200).json({
-      success:true,
-      creator: updatedCreator
-    });
-
-
-  } catch(error){
-
-    console.log("UPDATE CSV ERROR:", error);
-
-    res.status(500).json({
-      success:false,
-      message:error.message
-    });
-
-  }
-
-};
 
     // UPDATE EXISTING CREATOR
     if (existingCreator) {
@@ -496,6 +465,39 @@ return res.status(200).json({
       message: err.message,
     });
   }
+};
+
+//  EDIT CSV CREATOR
+export const updateCsvCreator = async (req, res) => {
+
+  try {
+
+    const updatedCreator = await CsvCreator.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new:true
+      }
+    );
+
+
+    res.status(200).json({
+      success:true,
+      creator: updatedCreator
+    });
+
+
+  } catch(error){
+
+    console.log("UPDATE CSV ERROR:", error);
+
+    res.status(500).json({
+      success:false,
+      message:error.message
+    });
+
+  }
+
 };
 
 // get latest report
@@ -894,8 +896,16 @@ if (languages) {
   };
 }
 
-if (hoboUserId) {
-  filter.hoboUserId = Number(hoboUserId);
+if (hoboUserId?.trim()) {
+  const search = hoboUserId.trim();
+
+  const min = Number(search);
+  const max = Number(search + "9".repeat(16 - search.length));
+
+  filter.hoboUserId = {
+    $gte: min,
+    $lte: max,
+  };
 }
 
 
