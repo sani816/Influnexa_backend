@@ -24,8 +24,9 @@ export const uploadCreatorsCSV = async (req, res) => {
     const creators = [];
 
     fs.createReadStream(req.file.path)
-      .pipe(csv())
-
+      .pipe(csv({
+  mapHeaders: ({header}) => header.trim()
+}))
       .on("data", (row) => {
         creators.push({
           timestamp: row["Timestamp"] || "",
@@ -177,7 +178,10 @@ export const uploadCreatorsCSV = async (req, res) => {
           fetchedDate:
             row["Fetched Date"] || "",
 
-          hoboUserId:row["Hobo User ID"] || "",
+          hoboUserId:
+  row["hoboUserId"] ||
+  row["Hobo User ID"] ||
+  "",
         });
       })
 
