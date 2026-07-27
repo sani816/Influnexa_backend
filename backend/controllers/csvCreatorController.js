@@ -340,47 +340,29 @@ const phone = cleanPhone(
 
 
 
-let searchCondition=[];
+let existingCreator = null;
 
 
+// First check email
 
 if(email){
 
-searchCondition.push({
-
-email:email
-
+existingCreator = await CsvCreator.findOne({
+    email: email
 });
 
 }
 
 
+// If email not found check phone
 
-if(phone){
+if(!existingCreator && phone){
 
-searchCondition.push({
-
-phoneNumber:phone
-
+existingCreator = await CsvCreator.findOne({
+    phoneNumber: phone
 });
 
 }
-
-
-
-if(searchCondition.length>0){
-
-
-existingCreator =
-await CsvCreator.findOne({
-
-$or:searchCondition
-
-});
-
-
-}
-
 
 
 // ===============================
@@ -389,33 +371,52 @@ $or:searchCondition
 
 if(existingCreator){
 
-
 let isUpdated = false;
+
 let changedFields=[];
 
 
-const ignoreFields = [
 
-"timestamp",
+const compareFields=[
 
-"fetchedDate",
 
-"createdAt",
+"fullName",
 
-"updatedAt",
+"email",
 
-"__v"
+"phoneNumber",
+
+"whatsappNumber",
+
+"instagramUsername",
+
+"instagramProfileLink",
+
+"instagramFollowersRange",
+
+"exactFollowers",
+
+"categories",
+
+"youtubeUsername",
+
+"youtubeChannelLink",
+
+"youtubeSubscribersRange",
+
+"city",
+
+"state",
+
+"country",
+
+"bio"
 
 ];
 
 
 
-Object.keys(creator).forEach((key)=>{
-
-
-if(ignoreFields.includes(key)){
-    return;
-}
+compareFields.forEach((key)=>{
 
 
 let oldValue = existingCreator[key];
@@ -423,39 +424,20 @@ let oldValue = existingCreator[key];
 let newValue = creator[key];
 
 
-if(key==="phoneNumber"){
 
-oldValue = cleanPhone(oldValue);
-
-newValue = cleanPhone(newValue);
-
-}
-
-
-
-if(key==="email"){
-
-oldValue = cleanEmail(oldValue);
-
-newValue = cleanEmail(newValue);
-
-}
-
-// Array comparison
 if(Array.isArray(oldValue)){
 
-oldValue =
-JSON.stringify(
+oldValue = JSON.stringify(
 oldValue.sort()
 );
 
 }
 
 
+
 if(Array.isArray(newValue)){
 
-newValue =
-JSON.stringify(
+newValue = JSON.stringify(
 newValue.sort()
 );
 
@@ -463,36 +445,32 @@ newValue.sort()
 
 
 
-const oldClean =
-oldValue === undefined || oldValue === null
-? ""
-: String(oldValue).trim();
+oldValue = String(oldValue || "")
+.trim();
+
+
+newValue = String(newValue || "")
+.trim();
 
 
 
-const newClean =
-newValue === undefined || newValue === null
-? ""
-: String(newValue).trim();
+if(newValue && oldValue !== newValue){
 
-
-
-if(
-newClean !== "" &&
-oldClean !== newClean
-){
 
 existingCreator[key]=creator[key];
 
+
 isUpdated=true;
 
+
 changedFields.push(key);
+
 
 }
 
 
-});
 
+});
 
 
 // Only save if something changed
@@ -573,16 +551,15 @@ row:i+2,
 
 fullName:creator.fullName,
 
-email =
+email:
 cleanEmail(
 creator.email
 ),
 
-phoneNumber =
+phoneNumber:
 cleanPhone(
 creator.phoneNumber
 ),
-
 status:"Uploaded",
 
 reason:"New creator added"
