@@ -394,11 +394,35 @@ let isUpdated = false;
 let changedFields=[];
 
 
+const ignoreFields = [
+
+"timestamp",
+
+"fetchedDate",
+
+"createdAt",
+
+"updatedAt",
+
+"__v"
+
+];
+
+
+
 Object.keys(creator).forEach((key)=>{
 
 
+if(ignoreFields.includes(key)){
+    return;
+}
+
+
 let oldValue = existingCreator[key];
+
 let newValue = creator[key];
+
+
 if(key==="phoneNumber"){
 
 oldValue = cleanPhone(oldValue);
@@ -419,18 +443,43 @@ newValue = cleanEmail(newValue);
 
 // Array comparison
 if(Array.isArray(oldValue)){
-oldValue = JSON.stringify(oldValue);
+
+oldValue =
+JSON.stringify(
+oldValue.sort()
+);
+
 }
 
+
 if(Array.isArray(newValue)){
-newValue = JSON.stringify(newValue);
+
+newValue =
+JSON.stringify(
+newValue.sort()
+);
+
 }
+
+
+
+const oldClean =
+oldValue === undefined || oldValue === null
+? ""
+: String(oldValue).trim();
+
+
+
+const newClean =
+newValue === undefined || newValue === null
+? ""
+: String(newValue).trim();
 
 
 
 if(
-newValue !== "" &&
-String(oldValue) !== String(newValue)
+newClean !== "" &&
+oldClean !== newClean
 ){
 
 existingCreator[key]=creator[key];
