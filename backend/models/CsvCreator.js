@@ -186,7 +186,7 @@ const csvCreatorSchema = new mongoose.Schema(
 
     hoboUserId: {
       type: Number,
-      default: null,
+      default: 0,
     },
   },
   {
