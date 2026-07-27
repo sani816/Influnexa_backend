@@ -25,7 +25,8 @@ export const uploadCreatorsCSV = async (req, res) => {
 
     fs.createReadStream(req.file.path)
       .pipe(csv({
-  mapHeaders: ({header}) => header.trim()
+  mapHeaders: ({header}) =>
+    header.replace(/^\uFEFF/, "").trim()
 }))
       .on("data", (row) => {
         creators.push({
@@ -178,10 +179,9 @@ export const uploadCreatorsCSV = async (req, res) => {
           fetchedDate:
             row["Fetched Date"] || "",
 
-          hoboUserId:
-  row["hoboUserId"] ||
-  row["Hobo User ID"] ||
-  "",
+          hoboUserId: String(
+  row["hoboUserId"] || ""
+).trim(),
         });
       })
 
@@ -295,42 +295,74 @@ try {
     // UPDATE EXISTING CREATOR
     if (existingCreator) {
 
+    let isUpdated = false;
+    let changedFields = [];
 
-        Object.assign(
-            existingCreator,
-            creator
-        );
 
+    Object.keys(creator).forEach((key)=>{
+
+        let oldValue = existingCreator[key];
+        let newValue = creator[key];
+
+
+        // Convert arrays to string for comparison
+        if(Array.isArray(oldValue)){
+            oldValue = oldValue.join(",");
+        }
+
+        if(Array.isArray(newValue)){
+            newValue = newValue.join(",");
+        }
+
+
+        if(
+            newValue !== "" &&
+            String(oldValue) !== String(newValue)
+        ){
+
+            existingCreator[key] = creator[key];
+
+            isUpdated = true;
+
+            changedFields.push(key);
+
+        }
+
+    });
+
+
+
+    if(isUpdated){
 
         await existingCreator.save();
-
 
         updatedRecords++;
 
 
         report.push({
 
-            row: i + 2,
+            row:i+2,
 
-            fullName: creator.fullName,
+            fullName:creator.fullName,
 
-            email: creator.email,
+            email:creator.email,
 
-            phoneNumber: creator.phoneNumber,
+            phoneNumber:creator.phoneNumber,
 
-            instagramUsername: creator.instagramUsername,
+            instagramUsername:creator.instagramUsername,
 
-            youtubeUsername: creator.youtubeUsername,
+            youtubeUsername:creator.youtubeUsername,
 
+            status:"Updated",
 
-            status: "Updated",
-
-            reason: "Existing creator updated with latest CSV data"
+            reason:
+            `Updated fields: ${changedFields.join(", ")}`
 
         });
 
 
     }
+  
 
 
     // CREATE NEW CREATOR
@@ -367,7 +399,7 @@ try {
 
     }
 
-
+  }
 
 }
 catch(error){
@@ -407,6 +439,7 @@ const savedReport = await CSVUploadReport.create({
     totalRecords,
 
     successfulRecords,
+    updatedRecords,
 
     failedRecords,
 

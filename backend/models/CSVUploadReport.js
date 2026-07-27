@@ -16,7 +16,10 @@ const csvUploadReportSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-
+updatedRecords:{
+    type:Number,
+    default:0
+},
     failedRecords: {
       type: Number,
       default: 0,
