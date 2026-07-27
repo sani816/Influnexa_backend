@@ -897,24 +897,12 @@ if (languages) {
 }
 
 if (hoboUserId?.trim()) {
-  const search = hoboUserId.trim();
-
-  if (!isNaN(search)) {
-    const digits = search.length;
-
-    // Adjust this according to the maximum length of your Hobo IDs.
-    const totalDigits = 7;
-
-    const min = Number(search) * Math.pow(10, totalDigits - digits);
-    const max =
-      (Number(search) + 1) * Math.pow(10, totalDigits - digits) - 1;
-
-    filter.hoboUserId = {
-      $gte: min,
-      $lte: max,
-    };
-  }
+  filter.hoboUserId = {
+    $regex: hoboUserId.trim(),
+    $options: "i",
+  };
 }
+
 
 
 
