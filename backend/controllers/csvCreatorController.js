@@ -177,8 +177,7 @@ export const uploadCreatorsCSV = async (req, res) => {
           fetchedDate:
             row["Fetched Date"] || "",
 
-          hoboUserId:
-            row["hoboUserId"] || "",
+          hoboUserId: Number(row["Hobo User ID"]) || 0,
         });
       })
 
