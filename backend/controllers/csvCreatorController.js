@@ -998,6 +998,12 @@ if (gender) {
   filter.gender = gender;
 }
 
+if (dateOfBirth?.trim()) {
+  filter.dateOfBirth = {
+    $regex: dateOfBirth.trim(),
+    $options: "i",
+  };
+}
 // ==============================
 // INSTAGRAM
 // ==============================
@@ -1103,6 +1109,13 @@ if (state) {
 
 if (country) {
   filter.country = country;
+}
+
+if (pincode?.trim()) {
+  filter.pincode = {
+    $regex: pincode.trim(),
+    $options: "i",
+  };
 }
 
 // ==============================
