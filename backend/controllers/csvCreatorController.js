@@ -344,7 +344,9 @@ const phone = cleanPhone(
 );
 
 
-
+const instagramUsername = cleanText(
+  creator.instagramUsername
+).toLowerCase();
 
 
 // First check email
@@ -370,9 +372,8 @@ existingCreator = await CsvCreator.findOne({
 });
 
 }
-const instagramUsername = cleanText(
-    creator.instagramUsername
-).toLowerCase();
+
+// check using intagram
 
 if (!existingCreator && instagramUsername) {
 
@@ -383,6 +384,16 @@ if (!existingCreator && instagramUsername) {
         }
     });
 
+}
+
+// 4. Match by YouTube Username
+if (!existingCreator && youtubeUsername) {
+  existingCreator = await CsvCreator.findOne({
+    youtubeUsername: {
+      $regex: `^${youtubeUsername}$`,
+      $options: "i",
+    },
+  });
 }
 
 // ===============================
@@ -1054,6 +1065,11 @@ if (instagramFollowersRange) {
   }
 }
 
+// Exact Followers Filter
+
+if (exactFollowers) {
+  filter.exactFollowers = Number(exactFollowers);
+}
 // ==============================
 // CATEGORY
 // ==============================
