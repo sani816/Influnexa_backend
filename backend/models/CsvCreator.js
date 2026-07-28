@@ -201,6 +201,18 @@ const csvCreatorSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+CsvCreatorSchema.index({ email: 1 });
+
+CsvCreatorSchema.index({ phoneNumber: 1 });
+
+CsvCreatorSchema.index({
+    instagramUsername: 1
+});
+
+CsvCreatorSchema.index({
+    youtubeUsername: 1
+});
+
 
 const CsvCreator =
   mongoose.models.CsvCreator || mongoose.model("CsvCreator", csvCreatorSchema);
