@@ -344,11 +344,14 @@ const phone = cleanPhone(
 );
 
 
+
 const instagramUsername = cleanText(
   creator.instagramUsername
 ).toLowerCase();
 
-
+const youtubeUsername = cleanText(
+    creator.youtubeUsername
+).toLowerCase();
 // First check email
 
 if(email){
@@ -670,6 +673,7 @@ return res.status(200).json({
     totalRecords,
 
     successfulRecords,
+    updatedRecords,
 
     failedRecords,
 
