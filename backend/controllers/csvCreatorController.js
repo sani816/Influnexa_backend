@@ -391,7 +391,7 @@ if (!isFirstUpload) {
             }
         });
     }
-continue
+
 }
 // ===============================
 // EXISTING USER
