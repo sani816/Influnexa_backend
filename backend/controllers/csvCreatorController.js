@@ -324,17 +324,11 @@ existingCreators.forEach((creator) => {
 });
 
 const bulkOperations = [];
+for (let i = 0; i < creators.length; i++) 
+{
+const creator = creators[i]
 
-          for (let i = 0; i < creators.length; i++) {
-          const creator = creators[i]
-
-          if (bulkOperations.length) {
-
-    await CsvCreator.bulkWrite(
-        bulkOperations
-    );
-
-}
+         
         
 //     if (!creator.fullName?.trim()) {
 
@@ -572,7 +566,19 @@ newValue = String(newValue || "")
 if (oldValue !== newValue) {
 
     existingCreator[key] = creator[key];
+emailMap.set(email, existingCreator);
 
+phoneMap.set(phone, existingCreator);
+
+instagramMap.set(
+    instagramUsername,
+    existingCreator
+);
+
+youtubeMap.set(
+    cleanText(creator.youtubeUsername).toLowerCase(),
+    existingCreator
+);
     isUpdated = true;
 
     changedFields.push(key);
@@ -668,7 +674,7 @@ else{
 
 bulkOperations.push({
 
-    updateOne: {
+    insertOne: {
 
         filter: {
             _id: existingCreator._id
@@ -734,6 +740,14 @@ reason:error.message
 
 
 }
+}
+
+if (bulkOperations.length > 0) {
+
+    await CsvCreator.bulkWrite(
+        bulkOperations
+    );
+
 }
 // SAVE REPORT PERMANENTLY
 const savedReport = await CSVUploadReport.create({
