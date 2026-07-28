@@ -1067,11 +1067,13 @@ if (instagramFollowersRange) {
 
 // Exact Followers Filter
 
-if (exactFollowers) {
+if (req.query.exactFollowers) {
   filter.exactFollowers = {
-    $gte: Number(exactFollowers)
+    $regex: "^" + req.query.exactFollowers,
+    $options: "i"
   };
 }
+
 // ==============================
 // CATEGORY
 // ==============================
