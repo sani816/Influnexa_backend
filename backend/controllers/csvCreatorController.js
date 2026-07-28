@@ -267,68 +267,8 @@ export const uploadCreatorsCSV = async (req, res) => {
          let successfulRecords = 0;
          let updatedRecords = 0;
           let failedRecords = 0;
-
-          const existingCreators = await CsvCreator.find(
-  {},
-  {
-    email: 1,
-    phoneNumber: 1,
-    instagramUsername: 1,
-    youtubeUsername: 1,
-    fullName: 1,
-    city: 1,
-    state: 1,
-    country: 1,
-    bio: 1,
-    instagramProfileLink: 1,
-    instagramFollowersRange: 1,
-    exactFollowers: 1,
-    youtubeChannelLink: 1,
-    youtubeSubscribersRange: 1,
-    whatsappNumber: 1,
-    categories: 1
-  }
-).lean();
-
-const emailMap = new Map();
-const phoneMap = new Map();
-const instagramMap = new Map();
-const youtubeMap = new Map();
-existingCreators.forEach((creator) => {
-
-
-    if (creator.email)
-        emailMap.set(
-            cleanEmail(creator.email),
-            creator
-        );
-
-    if (creator.phoneNumber)
-        phoneMap.set(
-            cleanPhone(creator.phoneNumber),
-            creator
-        );
-
-    if (creator.instagramUsername)
-        instagramMap.set(
-            cleanText(creator.instagramUsername).toLowerCase(),
-            creator
-        );
-
-    if (creator.youtubeUsername)
-        youtubeMap.set(
-            cleanText(creator.youtubeUsername).toLowerCase(),
-            creator
-        );
-
-});
-
-const bulkOperations = [];
-for (let i = 0; i < creators.length; i++) 
-{
-const creator = creators[i]
-
-         
+          for (let i = 0; i < creators.length; i++) {
+          const creator = creators[i]
         
 //     if (!creator.fullName?.trim()) {
 
@@ -391,7 +331,7 @@ if (!hasInstagram && !hasYoutube) {
 }
 try {
 
-// let existingCreator = null;
+let existingCreator = null;
 
 
 const email = cleanEmail(
@@ -411,58 +351,50 @@ const instagramUsername = cleanText(
 
 // First check email
 
-// if(email){
+if(email){
 
-// existingCreator = await CsvCreator.findOne({
-//  email:{
-//    $regex:`^${email}$`,
-//    $options:"i"
-//  }
-// });
+existingCreator = await CsvCreator.findOne({
+ email:{
+   $regex:`^${email}$`,
+   $options:"i"
+ }
+});
 
-// }
+}
 
 
-// // If email not found check phone
+// If email not found check phone
 
-// if(!existingCreator && phone){
+if(!existingCreator && phone){
 
-// existingCreator = await CsvCreator.findOne({
-//     phoneNumber: phone
-// });
+existingCreator = await CsvCreator.findOne({
+    phoneNumber: phone
+});
 
-// }
+}
 
-// // check using intagram
+// check using intagram
 
-// if (!existingCreator && instagramUsername) {
+if (!existingCreator && instagramUsername) {
 
-//     existingCreator = await CsvCreator.findOne({
-//         instagramUsername: {
-//             $regex: `^${instagramUsername}$`,
-//             $options: "i"
-//         }
-//     });
+    existingCreator = await CsvCreator.findOne({
+        instagramUsername: {
+            $regex: `^${instagramUsername}$`,
+            $options: "i"
+        }
+    });
 
-// }
+}
 
-// // 4. Match by YouTube Username
-// if (!existingCreator && youtubeUsername) {
-//   existingCreator = await CsvCreator.findOne({
-//     youtubeUsername: {
-//       $regex: `^${youtubeUsername}$`,
-//       $options: "i",
-//     },
-//   });
-// }
-
-let existingCreator =
-    emailMap.get(email) ||
-    phoneMap.get(phone) ||
-    instagramMap.get(instagramUsername) ||
-    youtubeMap.get(
-        cleanText(creator.youtubeUsername).toLowerCase()
-    );
+// 4. Match by YouTube Username
+if (!existingCreator && youtubeUsername) {
+  existingCreator = await CsvCreator.findOne({
+    youtubeUsername: {
+      $regex: `^${youtubeUsername}$`,
+      $options: "i",
+    },
+  });
+}
 
 // ===============================
 // EXISTING USER
@@ -566,19 +498,7 @@ newValue = String(newValue || "")
 if (oldValue !== newValue) {
 
     existingCreator[key] = creator[key];
-emailMap.set(email, existingCreator);
 
-phoneMap.set(phone, existingCreator);
-
-instagramMap.set(
-    instagramUsername,
-    existingCreator
-);
-
-youtubeMap.set(
-    cleanText(creator.youtubeUsername).toLowerCase(),
-    existingCreator
-);
     isUpdated = true;
 
     changedFields.push(key);
@@ -593,21 +513,7 @@ youtubeMap.set(
 
 if(isUpdated){
 
-bulkOperations.push({
-
-    updateOne: {
-
-        filter: {
-            _id: existingCreator._id
-        },
-
-        update: {
-            $set: creator
-        }
-
-    }
-
-});
+await existingCreator.save();
 
 updatedRecords++;
 
@@ -672,11 +578,7 @@ reason:"No changes found"
 else{
 
 
-bulkOperations.push({
-    insertOne: {
-        document: creator
-    }
-});
+await CsvCreator.create(creator);
 
 
 successfulRecords++;
@@ -731,14 +633,6 @@ reason:error.message
 
 }
 }
-
-if (bulkOperations.length > 0) {
-
-    await CsvCreator.bulkWrite(
-        bulkOperations
-    );
-
-}
 // SAVE REPORT PERMANENTLY
 const savedReport = await CSVUploadReport.create({
 
@@ -776,7 +670,6 @@ return res.status(200).json({
     totalRecords,
 
     successfulRecords,
-    updatedRecords,
 
     failedRecords,
 
