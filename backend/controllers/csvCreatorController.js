@@ -673,19 +673,9 @@ else{
 
 
 bulkOperations.push({
-
     insertOne: {
-
-        filter: {
-            _id: existingCreator._id
-        },
-
-        update: {
-            $set: creator
-        }
-
+        document: creator
     }
-
 });
 
 
@@ -786,6 +776,7 @@ return res.status(200).json({
     totalRecords,
 
     successfulRecords,
+    updatedRecords,
 
     failedRecords,
 

@@ -201,17 +201,7 @@ const csvCreatorSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-csvCreatorSchema.index({ email: 1 });
 
-csvCreatorSchema.index({ phoneNumber: 1 });
-
-csvCreatorSchema.index({
-    instagramUsername: 1
-});
-
-csvCreatorSchema.index({
-    youtubeUsername: 1
-});
 
 
 const CsvCreator =
