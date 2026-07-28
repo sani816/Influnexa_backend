@@ -260,7 +260,9 @@ export const uploadCreatorsCSV = async (req, res) => {
               message: "CSV has no data",
             });
           }
-
+          
+          const isFirstUpload =
+  (await CsvCreator.countDocuments()) === 0;
            const report = [];
 
          let totalRecords = creators.length;
@@ -352,53 +354,45 @@ const instagramUsername = cleanText(
 const youtubeUsername = cleanText(
     creator.youtubeUsername
 ).toLowerCase();
-// First check email
 
-if(email){
+// VALIDATION
 
-existingCreator = await CsvCreator.findOne({
- email:{
-   $regex:`^${email}$`,
-   $options:"i"
- }
-});
+if (!isFirstUpload) {
 
+    if (email) {
+        existingCreator = await CsvCreator.findOne({
+            email: {
+                $regex: `^${email}$`,
+                $options: "i"
+            }
+        });
+    }
+
+    if (!existingCreator && phone) {
+        existingCreator = await CsvCreator.findOne({
+            phoneNumber: phone
+        });
+    }
+
+    if (!existingCreator && instagramUsername) {
+        existingCreator = await CsvCreator.findOne({
+            instagramUsername: {
+                $regex: `^${instagramUsername}$`,
+                $options: "i"
+            }
+        });
+    }
+
+    if (!existingCreator && youtubeUsername) {
+        existingCreator = await CsvCreator.findOne({
+            youtubeUsername: {
+                $regex: `^${youtubeUsername}$`,
+                $options: "i"
+            }
+        });
+    }
+continue
 }
-
-
-// If email not found check phone
-
-if(!existingCreator && phone){
-
-existingCreator = await CsvCreator.findOne({
-    phoneNumber: phone
-});
-
-}
-
-// check using intagram
-
-if (!existingCreator && instagramUsername) {
-
-    existingCreator = await CsvCreator.findOne({
-        instagramUsername: {
-            $regex: `^${instagramUsername}$`,
-            $options: "i"
-        }
-    });
-
-}
-
-// 4. Match by YouTube Username
-if (!existingCreator && youtubeUsername) {
-  existingCreator = await CsvCreator.findOne({
-    youtubeUsername: {
-      $regex: `^${youtubeUsername}$`,
-      $options: "i",
-    },
-  });
-}
-
 // ===============================
 // EXISTING USER
 // ===============================
@@ -567,8 +561,6 @@ reason:"No changes found"
 
 
 }
-
-
 
 }
 
@@ -795,7 +787,7 @@ try{
 
 const result = await CsvCreator.deleteMany({});
 
-
+await CSVUploadReport.deleteMany({});
 const deletedReports = await CSVUploadReport.deleteMany({});
 if(io){
 
@@ -960,7 +952,7 @@ bio,
 
 
 page=1,
-limit=20
+limit=100
 
 
 }=req.query;
@@ -1176,46 +1168,25 @@ if (req.query.hoboUserId) {
 // DATABASE QUERY
 // =====================
 
-
-const pageNumber = Number(page);
-const limitNumber = Number(limit);
+const pageNumber = parseInt(page, 10) || 1;
+const limitNumber = parseInt(limit, 10) || 100;
 
 const skip = (pageNumber - 1) * limitNumber;
 
+const creators = await CsvCreator.find(filter)
+  .sort({ createdAt: -1 })
+  .skip(skip)
+  .limit(limitNumber);
 
-
-const creators =
-await CsvCreator
-.find(filter)
-.sort({
-createdAt:-1
-})
-.skip(skip)
-.limit(limitNumber);
-
-
-
-const total =
-await CsvCreator.countDocuments(filter);
-
-
+const total = await CsvCreator.countDocuments(filter);
 
 res.status(200).json({
-
-success:true,
-
-total,
-
-page:Number(page),
-
-limit:Number(limit),
-
-totalPages:
-Math.ceil(total/limit),
-
-data:creators
-
-
+  success: true,
+  total,
+  page: pageNumber,
+  limit: limitNumber,
+  totalPages: Math.ceil(total / limitNumber),
+  data: creators,
 });
 
 
