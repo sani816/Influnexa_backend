@@ -1068,7 +1068,9 @@ if (instagramFollowersRange) {
 // Exact Followers Filter
 
 if (exactFollowers) {
-  filter.exactFollowers = Number(exactFollowers);
+  filter.exactFollowers = {
+    $gte: Number(exactFollowers)
+  };
 }
 // ==============================
 // CATEGORY
