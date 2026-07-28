@@ -397,7 +397,7 @@ if (!hasInstagram && !hasYoutube) {
 }
 try {
 
-let existingCreator = null;
+// let existingCreator = null;
 
 
 const email = cleanEmail(
