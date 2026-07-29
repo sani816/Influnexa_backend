@@ -583,7 +583,7 @@ successfulRecords++;
 
 report.push({
 
-row:iindex+2,
+row:index+2,
 
 fullName:creator.fullName,
 
@@ -1164,14 +1164,13 @@ if (req.query.hoboUserId) {
     $options: "i"
   };
 }
-
 // ==============================
 // CAMPAIGN TYPE
 // ==============================
 
-if (campaignType) {
+if (campaignType?.trim()) {
   filter.campaignType = {
-    $in: [campaignType],
+    $in: [campaignType.trim()],
   };
 }
 
