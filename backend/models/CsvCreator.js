@@ -4,7 +4,7 @@ const csvCreatorSchema = new mongoose.Schema(
   {
     timestamp: { type: String, default: "" },
 
-    instagramUsername: { type: String, default: "" ,index:true},
+    instagramUsername: { type: String, default: "" ,index:true,sparse:true},
 
     instagramProfileLink: { type: String, default: "" },
 
@@ -95,6 +95,7 @@ const csvCreatorSchema = new mongoose.Schema(
       type: String,
       default: "",
       index:true,
+      sparse:true,
     },
 
     youtubeChannelLink: {

@@ -361,39 +361,46 @@ const youtubeUsername = cleanText(
 
 if (!isFirstUpload) {
 
-    if (email) {
-        existingCreator = await CsvCreator.findOne({
-            email: {
-                $regex: `^${email}$`,
-                $options: "i"
-            }
-        });
-    }
+    const conditions = [];
 
-    if (!existingCreator && phone) {
-        existingCreator = await CsvCreator.findOne({
-            phoneNumber: phone
-        });
-    }
+if (email) {
+    conditions.push({
+        email: {
+            $regex: `^${email}$`,
+            $options: "i"
+        }
+    });
+}
 
-    if (!existingCreator && instagramUsername) {
-        existingCreator = await CsvCreator.findOne({
-            instagramUsername: {
-                $regex: `^${instagramUsername}$`,
-                $options: "i"
-            }
-        });
-    }
+if (phone) {
+    conditions.push({
+        phoneNumber: phone
+    });
+}
 
-    if (!existingCreator && youtubeUsername) {
-        existingCreator = await CsvCreator.findOne({
-            youtubeUsername: {
-                $regex: `^${youtubeUsername}$`,
-                $options: "i"
-            }
-        });
-    }
+if (instagramUsername) {
+    conditions.push({
+        instagramUsername: {
+            $regex: `^${instagramUsername}$`,
+            $options: "i"
+        }
+    });
+}
 
+if (youtubeUsername) {
+    conditions.push({
+        youtubeUsername: {
+            $regex: `^${youtubeUsername}$`,
+            $options: "i"
+        }
+    });
+}
+
+if (conditions.length) {
+    existingCreator = await CsvCreator.findOne({
+        $or: conditions
+    });
+}
 }
 // ===============================
 // EXISTING USER
