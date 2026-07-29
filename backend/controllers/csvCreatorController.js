@@ -653,8 +653,6 @@ const savedReport = await CSVUploadReport.create({
 
     failedRecords,
 
-    report
-
 });
 
 
