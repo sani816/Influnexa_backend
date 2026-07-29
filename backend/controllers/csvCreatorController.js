@@ -296,7 +296,7 @@ if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
 
     failedRecords++;
 
-    report.push({
+    report[index]({
         row: index  + 2,
         fullName: creator.fullName,
         email: "",
@@ -320,7 +320,7 @@ if (!hasInstagram && !hasYoutube) {
 
     failedRecords++;
 
-    report.push({
+    report[index]({
         row: index + 2,
         fullName: creator.fullName,
         email: creator.email,
@@ -517,7 +517,7 @@ await existingCreator.save();
 updatedRecords++;
 
 
-report.push({
+report[index]({
 
 row:index+2,
 
@@ -544,7 +544,7 @@ else{
 
 // Same data no update
 
-report.push({
+report[index]({
 
 row:index+2,
 
@@ -581,7 +581,7 @@ await CsvCreator.create(creator);
 successfulRecords++;
 
 
-report.push({
+report[index]({
 
 row:index+2,
 
