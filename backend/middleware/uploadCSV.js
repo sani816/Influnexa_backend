@@ -73,7 +73,7 @@ const uploadCSV = multer({
 
     // 50 MB CSV limit
     fileSize:
-      50 * 1024 * 1024
+      1024*1024*1024
 
   }
 
