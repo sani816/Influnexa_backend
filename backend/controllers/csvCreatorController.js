@@ -296,7 +296,7 @@ if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
 
     failedRecords++;
 
-    report[index]={
+    report.push({
         row: index  + 2,
         fullName: creator.fullName,
         email: "",
@@ -305,7 +305,7 @@ if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
         youtubeUsername: creator.youtubeUsername,
         status: "Failed",
         reason: "Either Email or Mobile Number is required"
-    };
+    });
 
     return;
 }
@@ -320,7 +320,7 @@ if (!hasInstagram && !hasYoutube) {
 
     failedRecords++;
 
-    report[index]={
+    report.push({
         row: index + 2,
         fullName: creator.fullName,
         email: creator.email,
@@ -329,7 +329,7 @@ if (!hasInstagram && !hasYoutube) {
         youtubeUsername: creator.youtubeUsername,
         status: "Failed",
         reason: "Either Instagram or YouTube details are required"
-    };
+    });
 
     return;
 }
@@ -517,7 +517,7 @@ await existingCreator.save();
 updatedRecords++;
 
 
-report[index]={
+report.push({
 
 row:index+2,
 
@@ -534,7 +534,7 @@ status:"Updated",
 reason:
 `Updated fields: ${changedFields.join(", ")}`
 
-};
+});
 
 
 }
@@ -544,7 +544,7 @@ else{
 
 // Same data no update
 
-report[index]={
+report.push({
 
 row:index+2,
 
@@ -559,7 +559,7 @@ status:"Skipped",
 
 reason:"No changes found"
 
-};
+});
 
 
 }
@@ -581,7 +581,7 @@ await CsvCreator.create(creator);
 successfulRecords++;
 
 
-report[index]={
+report.push({
 
 row:index+2,
 
@@ -603,7 +603,7 @@ status:"Uploaded",
 
 reason:"New creator added"
 
-};
+});
 
 
 }
@@ -617,7 +617,7 @@ catch(error){
 failedRecords++;
 
 
-report[index]={
+report.push({
 
 row:index+2,
 
@@ -625,12 +625,12 @@ status:"Failed",
 
 reason:error.message
 
-};
+});
 }
 })
 )
         
-
+report.sort((a, b) => a.row - b.row);
 // SAVE REPORT PERMANENTLY
 const savedReport = await CSVUploadReport.create({
 
