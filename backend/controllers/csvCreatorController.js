@@ -1165,7 +1165,15 @@ if (req.query.hoboUserId) {
   };
 }
 
+// ==============================
+// CAMPAIGN TYPE
+// ==============================
 
+if (campaignType) {
+  filter.campaignType = {
+    $in: [campaignType],
+  };
+}
 
 
 // DATABASE QUERY
