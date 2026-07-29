@@ -617,7 +617,7 @@ catch(error){
 failedRecords++;
 
 
-report.push({
+report[index]={
 
 row:index+2,
 
@@ -625,7 +625,7 @@ status:"Failed",
 
 reason:error.message
 
-});
+};
 }
 })
 )
