@@ -272,7 +272,7 @@ export const uploadCreatorsCSV = async (req, res) => {
 
   const limit = pLimit(50);
   await Promise.all(
-  creators.map(async (creator, index) => {
+  creators.map(async (creator, index) => 
         limit(async () => {
 
 //     if (!creator.fullName?.trim()) {
@@ -636,7 +636,7 @@ reason:error.message
 });
 }
 })
-})
+)
 )
 
         
