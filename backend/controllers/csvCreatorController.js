@@ -652,6 +652,7 @@ const savedReport = await CSVUploadReport.create({
     updatedRecords,
 
     failedRecords,
+    report
 
 });
 
@@ -679,6 +680,7 @@ return res.status(200).json({
     updatedRecords,
 
     failedRecords,
+    report
 
 });
         } catch (err) {
@@ -796,7 +798,7 @@ try{
 
 const result = await CsvCreator.deleteMany({});
 
-await CSVUploadReport.deleteMany({});
+
 const deletedReports = await CSVUploadReport.deleteMany({});
 if(io){
 
