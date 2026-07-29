@@ -2,7 +2,7 @@ import fs from "fs";
 import csv from "csv-parser";
 import CsvCreator from "../models/CsvCreator.js";
 import CSVUploadReport from "../models/CSVUploadReport.js";
-
+import pLimit from "p-limit";
 import { io } from "../server.js";
 
 
@@ -270,7 +270,7 @@ export const uploadCreatorsCSV = async (req, res) => {
          let updatedRecords = 0;
           let failedRecords = 0;
 
-          
+  const limit = pLimit(50);
   await Promise.all(
   creators.map(async (creator, index) => {
         
