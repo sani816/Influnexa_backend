@@ -297,7 +297,7 @@ if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
     failedRecords++;
 
     report.push({
-        row: index  + 2,
+        row: index  + 1,
         fullName: creator.fullName,
         email: "",
         phoneNumber: "",
@@ -321,7 +321,7 @@ if (!hasInstagram && !hasYoutube) {
     failedRecords++;
 
     report.push({
-        row: index + 2,
+        row: index + 1,
         fullName: creator.fullName,
         email: creator.email,
         phoneNumber: creator.phoneNumber,
@@ -519,7 +519,7 @@ updatedRecords++;
 
 report.push({
 
-row:index+2,
+row:index+1,
 
 fullName:creator.fullName,
 
@@ -546,7 +546,7 @@ else{
 
 report.push({
 
-row:index+2,
+row:index+1,
 
 fullName:creator.fullName,
 
@@ -583,7 +583,7 @@ successfulRecords++;
 
 report.push({
 
-row:index+2,
+row:index+1,
 
 fullName:creator.fullName,
 
@@ -619,7 +619,7 @@ failedRecords++;
 
 report.push({
 
-row:index+2,
+row:index+1,
 
 status:"Failed",
 
@@ -630,7 +630,7 @@ reason:error.message
 })
 )
         
-report.sort((a, b) => a.row - b.row);
+
 // SAVE REPORT PERMANENTLY
 const savedReport = await CSVUploadReport.create({
 
