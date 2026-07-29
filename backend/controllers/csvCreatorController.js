@@ -682,8 +682,6 @@ return res.status(200).json({
 
     failedRecords,
 
-    report
-
 });
         } catch (err) {
           console.error("INSERT ERROR:");
