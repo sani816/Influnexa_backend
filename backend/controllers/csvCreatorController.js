@@ -269,8 +269,10 @@ export const uploadCreatorsCSV = async (req, res) => {
          let successfulRecords = 0;
          let updatedRecords = 0;
           let failedRecords = 0;
-          for (let i = 0; i < creators.length; i++) {
-          const creator = creators[i]
+
+          
+  await Promise.all(
+  creators.map(async (creator, index) => {
         
 //     if (!creator.fullName?.trim()) {
 
@@ -295,7 +297,7 @@ if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
     failedRecords++;
 
     report.push({
-        row: i + 2,
+        row: index  + 2,
         fullName: creator.fullName,
         email: "",
         phoneNumber: "",
@@ -319,7 +321,7 @@ if (!hasInstagram && !hasYoutube) {
     failedRecords++;
 
     report.push({
-        row: i + 2,
+        row: index + 2,
         fullName: creator.fullName,
         email: creator.email,
         phoneNumber: creator.phoneNumber,
@@ -517,7 +519,7 @@ updatedRecords++;
 
 report.push({
 
-row:i+2,
+row:index+2,
 
 fullName:creator.fullName,
 
@@ -544,7 +546,7 @@ else{
 
 report.push({
 
-row:i+2,
+row:index+2,
 
 fullName:creator.fullName,
 
@@ -581,7 +583,7 @@ successfulRecords++;
 
 report.push({
 
-row:i+2,
+row:iindex+2,
 
 fullName:creator.fullName,
 
@@ -617,17 +619,18 @@ failedRecords++;
 
 report.push({
 
-row:i+2,
+row:index+2,
 
 status:"Failed",
 
 reason:error.message
 
 });
-
-
 }
-}
+})
+)
+        
+
 // SAVE REPORT PERMANENTLY
 const savedReport = await CSVUploadReport.create({
 
