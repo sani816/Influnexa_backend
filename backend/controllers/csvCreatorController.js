@@ -307,7 +307,7 @@ if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
         reason: "Either Email or Mobile Number is required"
     });
 
-    continue;
+    return;
 }
  const hasInstagram =
     cleanText(creator.instagramUsername) !== "" 
@@ -331,7 +331,7 @@ if (!hasInstagram && !hasYoutube) {
         reason: "Either Instagram or YouTube details are required"
     });
 
-    continue;
+    return;
 }
 try {
 
