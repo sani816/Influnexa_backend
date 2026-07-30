@@ -263,6 +263,7 @@ export const uploadCreatorsCSV = async (req, res) => {
           const isFirstUpload =
   (await CsvCreator.countDocuments()) === 0;
            const report = [];
+const REPORT_BATCH_SIZE = 500;
 
          let totalRecords = creators.length;
          let successfulRecords = 0;
@@ -306,9 +307,46 @@ if (!creator.email?.trim() && !creator.phoneNumber?.trim()) {
         status: "Failed",
         reason: "Either Email or Mobile Number is required"
     });
+    if (report.length >= REPORT_BATCH_SIZE) {
+
+    if (!savedReport) {
+
+        savedReport = await CSVUploadReport.create({
+            fileName: req.file.originalname,
+            totalRecords,
+            successfulRecords,
+            updatedRecords,
+            failedRecords,
+            report: [...report]
+        });
+
+    } else {
+
+        await CSVUploadReport.updateOne(
+            { _id: savedReport._id },
+            {
+                $push: {
+                    report: {
+                        $each: report
+                    }
+                },
+                $set: {
+                    successfulRecords,
+                    updatedRecords,
+                    failedRecords
+                }
+            }
+        );
+
+    }
+
+    report.length = 0;
+}
 
     return;
 }
+
+
  const hasInstagram =
     cleanText(creator.instagramUsername) !== "" 
 
@@ -331,8 +369,46 @@ if (!hasInstagram && !hasYoutube) {
         reason: "Either Instagram or YouTube details are required"
     });
 
+    if (report.length >= REPORT_BATCH_SIZE) {
+
+    if (!savedReport) {
+
+        savedReport = await CSVUploadReport.create({
+            fileName: req.file.originalname,
+            totalRecords,
+            successfulRecords,
+            updatedRecords,
+            failedRecords,
+            report: [...report]
+        });
+
+    } else {
+
+        await CSVUploadReport.updateOne(
+            { _id: savedReport._id },
+            {
+                $push: {
+                    report: {
+                        $each: report
+                    }
+                },
+                $set: {
+                    successfulRecords,
+                    updatedRecords,
+                    failedRecords
+                }
+            }
+        );
+
+    }
+
+    report.length = 0;
+}
+
     return;
 }
+
+
 try {
 
 let existingCreator = null;
@@ -544,7 +620,43 @@ reason:
 });
 
 
+if (report.length >= REPORT_BATCH_SIZE) {
+
+    if (!savedReport) {
+
+        savedReport = await CSVUploadReport.create({
+            fileName: req.file.originalname,
+            totalRecords,
+            successfulRecords,
+            updatedRecords,
+            failedRecords,
+            report: [...report]
+        });
+
+    } else {
+
+        await CSVUploadReport.updateOne(
+            { _id: savedReport._id },
+            {
+                $push: {
+                    report: {
+                        $each: report
+                    }
+                },
+                $set: {
+                    successfulRecords,
+                    updatedRecords,
+                    failedRecords
+                }
+            }
+        );
+
+    }
+
+    report.length = 0;
 }
+}
+
 
 else{
 
@@ -567,7 +679,41 @@ status:"Skipped",
 reason:"No changes found"
 
 });
+if (report.length >= REPORT_BATCH_SIZE) {
 
+    if (!savedReport) {
+
+        savedReport = await CSVUploadReport.create({
+            fileName: req.file.originalname,
+            totalRecords,
+            successfulRecords,
+            updatedRecords,
+            failedRecords,
+            report: [...report]
+        });
+
+    } else {
+
+        await CSVUploadReport.updateOne(
+            { _id: savedReport._id },
+            {
+                $push: {
+                    report: {
+                        $each: report
+                    }
+                },
+                $set: {
+                    successfulRecords,
+                    updatedRecords,
+                    failedRecords
+                }
+            }
+        );
+
+    }
+
+    report.length = 0;
+}
 
 }
 
@@ -611,7 +757,41 @@ status:"Uploaded",
 reason:"New creator added"
 
 });
+if (report.length >= REPORT_BATCH_SIZE) {
 
+    if (!savedReport) {
+
+        savedReport = await CSVUploadReport.create({
+            fileName: req.file.originalname,
+            totalRecords,
+            successfulRecords,
+            updatedRecords,
+            failedRecords,
+            report: [...report]
+        });
+
+    } else {
+
+        await CSVUploadReport.updateOne(
+            { _id: savedReport._id },
+            {
+                $push: {
+                    report: {
+                        $each: report
+                    }
+                },
+                $set: {
+                    successfulRecords,
+                    updatedRecords,
+                    failedRecords
+                }
+            }
+        );
+
+    }
+
+    report.length = 0;
+}
 
 }
 
@@ -633,6 +813,42 @@ status:"Failed",
 reason:error.message
 
 });
+
+if (report.length >= REPORT_BATCH_SIZE) {
+
+    if (!savedReport) {
+
+        savedReport = await CSVUploadReport.create({
+            fileName: req.file.originalname,
+            totalRecords,
+            successfulRecords,
+            updatedRecords,
+            failedRecords,
+            report: [...report]
+        });
+
+    } else {
+
+        await CSVUploadReport.updateOne(
+            { _id: savedReport._id },
+            {
+                $push: {
+                    report: {
+                        $each: report
+                    }
+                },
+                $set: {
+                    successfulRecords,
+                    updatedRecords,
+                    failedRecords
+                }
+            }
+        );
+
+    }
+
+    report.length = 0;
+}
 }
 })
 )
@@ -641,19 +857,47 @@ reason:error.message
         
 
 // SAVE REPORT PERMANENTLY
-const savedReport = await CSVUploadReport.create({
+if (report.length > 0) {
 
-    fileName: req.file.originalname,
+    if (!savedReport) {
 
-    totalRecords,
+        savedReport = await CSVUploadReport.create({
 
-    successfulRecords,
-    updatedRecords,
+            fileName: req.file.originalname,
 
-    failedRecords,
-    report
+            totalRecords,
 
-});
+            successfulRecords,
+
+            updatedRecords,
+
+            failedRecords,
+
+            report:[]
+
+        });
+
+    } else {
+
+        await CSVUploadReport.updateOne(
+            { _id: savedReport._id },
+            {
+                $push: {
+                    report: {
+                        $each: report
+                    }
+                },
+                $set: {
+                    successfulRecords,
+                    updatedRecords,
+                    failedRecords
+                }
+            }
+        );
+
+    }
+
+}
 
 
 fs.unlink(req.file.path, () => {});
@@ -679,7 +923,7 @@ return res.status(200).json({
     updatedRecords,
 
     failedRecords,
-    report
+    report:[]
   
 
 });
