@@ -754,10 +754,9 @@ export const updateCsvCreator = async (req, res) => {
 try{
 
 const report = await CSVUploadReport
-.findOne()
-.sort({
-createdAt:-1
-});
+  .findOne()
+  .sort({ createdAt: -1 })
+  .select("fileName totalRecords successfulRecords updatedRecords failedRecords createdAt");
 
 if(!report){
  return res.json({
@@ -790,6 +789,23 @@ message:error.message
 }
 
 };
+
+export const getCSVReportDetails = async (req, res) => {
+  try {
+    const report = await CSVUploadReport.findById(req.params.id).select("report");
+
+    res.json({
+      success: true,
+      report: report?.report || [],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // ==========================
 // DELETE ALL CREATORS
 // ==========================
