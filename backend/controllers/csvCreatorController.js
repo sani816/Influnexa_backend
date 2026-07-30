@@ -264,7 +264,7 @@ export const uploadCreatorsCSV = async (req, res) => {
           const limit = pLimit(25);
           const isFirstUpload =
   (await CsvCreator.countDocuments()) === 0;
-           const report = [];
+          //  const report = [];
 
          let totalRecords = creators.length;
          let successfulRecords = 0;
