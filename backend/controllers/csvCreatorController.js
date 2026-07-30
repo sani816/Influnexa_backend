@@ -651,6 +651,7 @@ const savedReport = await CSVUploadReport.create({
     updatedRecords,
 
     failedRecords,
+    report
 });
 
 
@@ -677,6 +678,8 @@ return res.status(200).json({
     updatedRecords,
 
     failedRecords,
+
+    report
 });
         } catch (err) {
           console.error("INSERT ERROR:");
