@@ -260,7 +260,8 @@ export const uploadCreatorsCSV = async (req, res) => {
               message: "CSV has no data",
             });
           }
-          
+          const BATCH_SIZE = 1000;
+          const limit = pLimit(25);
           const isFirstUpload =
   (await CsvCreator.countDocuments()) === 0;
            const report = [];
@@ -270,10 +271,21 @@ export const uploadCreatorsCSV = async (req, res) => {
          let updatedRecords = 0;
           let failedRecords = 0;
 
-  const limit = pLimit(25);
+
+for (let start = 0; start < creators.length; start += BATCH_SIZE) {
+
+    const batch = creators.slice(start, start + BATCH_SIZE);
+
+    console.log(
+        `Processing batch ${start / BATCH_SIZE + 1}`
+    );
+
+  
   await Promise.all(
-  creators.map((creator, index) => 
+  batch.map((creator, batchIndex) => 
         limit(async () => {
+          const index = start + batchIndex;
+
 
 //     if (!creator.fullName?.trim()) {
 
@@ -639,7 +651,7 @@ reason:error.message
 )
 )
 
-        
+}    
 
 // SAVE REPORT PERMANENTLY
 const savedReport = await CSVUploadReport.create({
@@ -754,9 +766,10 @@ export const updateCsvCreator = async (req, res) => {
 try{
 
 const report = await CSVUploadReport
-  .findOne()
-  .sort({ createdAt: -1 })
-  .select("fileName totalRecords successfulRecords updatedRecords failedRecords createdAt");
+.findOne()
+.sort({
+createdAt:-1
+});
 
 if(!report){
  return res.json({
@@ -789,23 +802,6 @@ message:error.message
 }
 
 };
-
-export const getCSVReportDetails = async (req, res) => {
-  try {
-    const report = await CSVUploadReport.findById(req.params.id).select("report");
-
-    res.json({
-      success: true,
-      report: report?.report || [],
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
 // ==========================
 // DELETE ALL CREATORS
 // ==========================
