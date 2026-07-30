@@ -260,32 +260,19 @@ export const uploadCreatorsCSV = async (req, res) => {
               message: "CSV has no data",
             });
           }
-          const BATCH_SIZE = 1000;
-          const limit = pLimit(25);
           const isFirstUpload =
   (await CsvCreator.countDocuments()) === 0;
-          //  const report = [];
+           const report = [];
 
          let totalRecords = creators.length;
          let successfulRecords = 0;
          let updatedRecords = 0;
           let failedRecords = 0;
 
-
-for (let start = 0; start < creators.length; start += BATCH_SIZE) {
-
-    const batch = creators.slice(start, start + BATCH_SIZE);
-
-    console.log(
-        `Processing batch ${start / BATCH_SIZE + 1}`
-    );
-
-  
+  const limit = pLimit(25);
   await Promise.all(
-  batch.map((creator, batchIndex) => 
+  creators.map((creator, index) => 
         limit(async () => {
-          const index = start + batchIndex;
-
 
 //     if (!creator.fullName?.trim()) {
 
@@ -651,7 +638,7 @@ reason:error.message
 )
 )
 
-}    
+        
 
 // SAVE REPORT PERMANENTLY
 const savedReport = await CSVUploadReport.create({
@@ -664,6 +651,7 @@ const savedReport = await CSVUploadReport.create({
     updatedRecords,
 
     failedRecords,
+    report
 
 });
 
@@ -691,6 +679,7 @@ return res.status(200).json({
     updatedRecords,
 
     failedRecords,
+    report
   
 
 });
