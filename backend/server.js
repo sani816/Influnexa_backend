@@ -15,6 +15,9 @@ import blogRoutes from "./routes/blogRoutes.js"
 import connectDB from "./config/db.js";
 import csvRoutes from "./routes/csvRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import campaignRoutes from "./routes/campaignRoutes.js";
+
+
 dotenv.config();
 connectDB();
 
@@ -76,6 +79,10 @@ app.use("/api/bookings", bookingRoutes);
  
 app.use("/api/csv-creators", csvRoutes);
 app.use("/api/auth",authRoutes);
+app.use(
+"/api/campaigns",
+campaignRoutes
+);
 
 // static uploads
 // app.use("/uploads", express.static("uploads"));
