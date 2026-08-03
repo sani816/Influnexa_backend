@@ -37,7 +37,7 @@ export const submitPaymentRequest = async (req, res) => {
       email: email.toLowerCase(),
       phone,
       paymentApp,
-      amount: amount || 999,
+      amount: amount ||1,
       transactionId,
       screenshot: req.file.filename,
       filterData: filterData ? JSON.parse(filterData) : {},
@@ -242,30 +242,54 @@ export const downloadCSV = async (req, res) => {
 // RESET DOWNLOAD (ADMIN)
 // ======================================================
 
-export const resetDownload = async (req, res) => {
-  try {
-    const payment = await PaymentRequest.findById(req.params.id);
+export const lockDownload = async(req,res)=>{
 
-    if (!payment) {
-      return res.status(404).json({
-        success: false,
-        message: "Payment not found.",
-      });
-    }
+try{
 
-    payment.downloaded = false;
-    payment.downloadedAt = null;
 
-    await payment.save();
+const payment = await PaymentRequest.findById(
+req.params.id
+);
 
-    res.json({
-      success: true,
-      message: "Download unlocked successfully.",
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
+
+if(!payment){
+
+return res.status(404).json({
+
+success:false,
+message:"Payment not found"
+
+});
+
+}
+
+
+payment.downloaded = true;
+payment.downloadedAt = new Date();
+
+
+await payment.save();
+
+
+res.json({
+
+success:true,
+message:"Download locked"
+
+});
+
+
+}
+catch(err){
+
+res.status(500).json({
+
+success:false,
+message:err.message
+
+});
+
+}
+
+
 };

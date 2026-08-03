@@ -9,7 +9,7 @@ import {
   rejectPayment,
   checkPaymentStatus,
   downloadCSV,
-  resetDownload,
+  lockDownload,
 } from "../controllers/paymentController.js";
 
 const router = express.Router();
@@ -63,8 +63,8 @@ router.put(
 
 // Unlock Download Again
 router.put(
-  "/reset-download/:id",
-  resetDownload
+"/lock-download/:id",
+lockDownload
 );
 
 export default router;
