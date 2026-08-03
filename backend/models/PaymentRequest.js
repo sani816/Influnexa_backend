@@ -48,7 +48,7 @@ const paymentRequestSchema = new mongoose.Schema(
     transactionId: {
       type: String,
       default: "",
-      required:"true"
+      required:true,
     },
     screenshotHash:{
     type:String,
