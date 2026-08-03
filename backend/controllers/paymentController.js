@@ -2,7 +2,7 @@ import PaymentRequest from "../models/PaymentRequest.js";
 import Creator from "../models/Creator.js";
 import crypto from "crypto";
 import fs from "fs";
-
+import axios from "axios";
 // ======================================================
 // SUBMIT PAYMENT REQUEST
 // ======================================================
@@ -34,14 +34,16 @@ export const submitPaymentRequest = async (req, res) => {
     }
 // CREATE IMAGE HASH
 
-const fileBuffer = fs.readFileSync(req.file.path);
+// Download image from Cloudinary
+const response = await axios.get(req.file.path, {
+  responseType: "arraybuffer",
+});
 
-
+// Generate SHA256 hash
 const screenshotHash = crypto
-.createHash("sha256")
-.update(fileBuffer)
-.digest("hex");
-
+  .createHash("sha256")
+  .update(response.data)
+  .digest("hex");
 
 
 // CHECK OLD SCREENSHOT
