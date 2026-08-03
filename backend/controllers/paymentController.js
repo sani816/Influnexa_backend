@@ -1,6 +1,6 @@
 import PaymentRequest from "../models/PaymentRequest.js";
 import Creator from "../models/Creator.js";
-
+import crypto from "crypto";
 
 // ======================================================
 // SUBMIT PAYMENT REQUEST
@@ -31,7 +31,34 @@ export const submitPaymentRequest = async (req, res) => {
         message: "Payment screenshot is required.",
       });
     }
+// CREATE IMAGE HASH
 
+const screenshotHash = crypto
+.createHash("sha256")
+.update(req.file.buffer)
+.digest("hex");
+
+
+
+// CHECK OLD SCREENSHOT
+
+const oldPayment = await PaymentRequest.findOne({
+screenshotHash
+});
+
+
+if(oldPayment){
+
+return res.status(400).json({
+
+success:false,
+
+message:
+"This payment screenshot is already used. Please make a new payment."
+
+});
+
+}
     const payment = await PaymentRequest.create({
       name,
       email: email.toLowerCase(),
@@ -40,6 +67,7 @@ export const submitPaymentRequest = async (req, res) => {
       amount: amount ||1,
       transactionId,
       screenshot: req.file.filename,
+      creenshotHash:screenshotHash,
       filterData: filterData ? JSON.parse(filterData) : {},
       status: "Pending",
       approved: false,
@@ -290,58 +318,3 @@ export const downloadCSV = async (req, res) => {
 };
 
 
-// ======================================================
-// RESET DOWNLOAD (ADMIN)
-// ======================================================
-
-export const lockDownload = async(req,res)=>{
-
-try{
-
-
-const payment = await PaymentRequest.findById(
-req.params.id
-);
-
-
-if(!payment){
-
-return res.status(404).json({
-
-success:false,
-message:"Payment not found"
-
-});
-
-}
-
-
-payment.downloaded = true;
-payment.downloadedAt = new Date();
-
-
-await payment.save();
-
-
-res.json({
-
-success:true,
-message:"Download locked"
-
-});
-
-
-}
-catch(err){
-
-res.status(500).json({
-
-success:false,
-message:err.message
-
-});
-
-}
-
-
-};
