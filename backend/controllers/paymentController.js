@@ -81,7 +81,18 @@ message:
     });
   } catch (err) {
     console.log(err);
+if(err.code === 11000){
 
+return res.status(400).json({
+
+success:false,
+
+message:
+"Same payment screenshot already used. Please make a new payment."
+
+});
+
+}
     res.status(500).json({
       success: false,
       message: err.message,
