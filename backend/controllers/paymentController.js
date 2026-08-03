@@ -18,7 +18,7 @@ export const submitPaymentRequest = async (req, res) => {
       filterData,
     } = req.body;
 
-    if (!name || !email || !phone || !paymentApp) {
+    if (!name || !email || !phone || !paymentApp ||!transactionId) {
       return res.status(400).json({
         success: false,
         message: "All fields are required.",
