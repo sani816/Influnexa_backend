@@ -67,7 +67,7 @@ message:
       amount: amount ||1,
       transactionId,
       screenshot: req.file.filename,
-      creenshotHash:screenshotHash,
+      screenshotHash:screenshotHash,
       filterData: filterData ? JSON.parse(filterData) : {},
       status: "Pending",
       approved: false,
