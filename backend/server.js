@@ -16,6 +16,7 @@ import connectDB from "./config/db.js";
 import csvRoutes from "./routes/csvRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 
 dotenv.config();
@@ -83,7 +84,7 @@ app.use(
 "/api/campaigns",
 campaignRoutes
 );
-
+app.use("/api/payment", paymentRoutes);
 // static uploads
 // app.use("/uploads", express.static("uploads"));
 
