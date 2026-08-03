@@ -70,7 +70,7 @@ message:
       paymentApp,
       amount: amount ||1,
       transactionId,
-      screenshot: req.file.filename,
+      screenshot: req.file.path,
       screenshotHash:screenshotHash,
       filterData: filterData ? JSON.parse(filterData) : {},
       status: "Pending",
