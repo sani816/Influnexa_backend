@@ -1,6 +1,7 @@
 import PaymentRequest from "../models/PaymentRequest.js";
 import Creator from "../models/Creator.js";
 import crypto from "crypto";
+import fs from "fs";
 
 // ======================================================
 // SUBMIT PAYMENT REQUEST
@@ -33,9 +34,12 @@ export const submitPaymentRequest = async (req, res) => {
     }
 // CREATE IMAGE HASH
 
+const fileBuffer = fs.readFileSync(req.file.path);
+
+
 const screenshotHash = crypto
 .createHash("sha256")
-.update(req.file.buffer)
+.update(fileBuffer)
 .digest("hex");
 
 
