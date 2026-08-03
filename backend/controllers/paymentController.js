@@ -176,10 +176,12 @@ export const checkPaymentStatus = async (req, res) => {
     }
 
     res.json({
-      approved: payment.approved,
-      downloaded: payment.downloaded,
-      status: payment.status,
-    });
+  success:true,
+  paymentId: payment._id,
+  approved: payment.approved,
+  downloaded: payment.downloaded,
+  status: payment.status,
+});
   } catch (err) {
     res.status(500).json({
       success: false,

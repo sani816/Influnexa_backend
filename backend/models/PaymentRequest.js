@@ -45,10 +45,10 @@ const paymentRequestSchema = new mongoose.Schema(
       required: true,
     },
 
-    transactionId: {
-      type: String,
-      default: "",
-    },
+    // transactionId: {
+    //   type: String,
+    //   default: "",
+    // },
 
     status: {
       type: String,
