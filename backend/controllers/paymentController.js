@@ -157,39 +157,91 @@ export const rejectPayment = async (req, res) => {
 // CHECK PAYMENT STATUS
 // ======================================================
 
-export const checkPaymentStatus = async (req, res) => {
-  try {
-    const email = req.params.email.toLowerCase();
+export const checkPaymentStatus = async (req,res)=>{
 
-    const payment = await PaymentRequest.findOne({
-      email,
-    }).sort({
-      createdAt: -1,
-    });
+try{
 
-    if (!payment) {
-      return res.json({
-        approved: false,
-        downloaded: false,
-        status: "Not Found",
-      });
-    }
+const email=req.params.email.toLowerCase();
 
-    res.json({
-  success:true,
-  paymentId: payment._id,
-  approved: payment.approved,
-  downloaded: payment.downloaded,
-  status: payment.status,
+
+// get latest payment only
+
+const payment = await PaymentRequest.findOne({
+email
+})
+.sort({
+createdAt:-1
 });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
 
+
+if(!payment){
+
+return res.json({
+
+success:false,
+approved:false,
+downloaded:false,
+status:"No Payment Found"
+
+});
+
+}
+
+
+
+// IMPORTANT CHECK
+
+if(payment.downloaded===true){
+
+return res.json({
+
+success:true,
+
+paymentId:payment._id,
+
+approved:false,
+
+downloaded:true,
+
+status:"Already Downloaded. Please make new payment."
+
+});
+
+
+}
+
+
+
+res.json({
+
+success:true,
+
+paymentId:payment._id,
+
+approved:payment.approved,
+
+downloaded:payment.downloaded,
+
+status:payment.status
+
+
+});
+
+
+}
+catch(err){
+
+res.status(500).json({
+
+success:false,
+message:err.message
+
+});
+
+
+}
+
+};
 
 // ======================================================
 // DOWNLOAD CREATORS
