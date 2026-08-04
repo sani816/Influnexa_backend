@@ -979,7 +979,7 @@ bio,
   fetchedDate,
 
   InflunexaUserId,
-
+ contactStatus,
 
 page=1,
 limit=100
@@ -1233,6 +1233,57 @@ if (influencerType) {
   }
 
 }
+
+
+// ==============================
+// CONTACT STATUS
+// ==============================
+
+if (contactStatus) {
+
+  switch (contactStatus) {
+
+    case "Mobile No Only":
+      filter.phoneNumber = {
+        $exists: true,
+        $nin: ["", null]
+      };
+
+      filter.$or = [
+        { email: "" },
+        { email: null },
+        { email: { $exists: false } }
+      ];
+      break;
+
+    case "Email Only":
+      filter.email = {
+        $exists: true,
+        $nin: ["", null]
+      };
+
+      filter.$or = [
+        { phoneNumber: "" },
+        { phoneNumber: null },
+        { phoneNumber: { $exists: false } }
+      ];
+      break;
+
+    case "Both Email & Mobile":
+      filter.email = {
+        $exists: true,
+        $nin: ["", null]
+      };
+
+      filter.phoneNumber = {
+        $exists: true,
+        $nin: ["", null]
+      };
+      break;
+  }
+
+}
+
 // DATABASE QUERY
 // =====================
 
