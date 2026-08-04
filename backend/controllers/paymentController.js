@@ -1,7 +1,6 @@
 import PaymentRequest from "../models/PaymentRequest.js";
 import Creator from "../models/Creator.js";
 import crypto from "crypto";
-import fs from "fs";
 import axios from "axios";
 // ======================================================
 // SUBMIT PAYMENT REQUEST
@@ -313,8 +312,72 @@ export const downloadCSV = async (req, res) => {
       });
     }
 
-    const creators = await Creator.find(filterData);
+    const {
 
+name,
+email:filterEmail,
+city,
+category,
+followers,
+instagram
+
+} = req.body.filterData || {};
+
+let query = {};
+if(name){
+
+query.fullName={
+$regex:name,
+$options:"i"
+};
+
+}
+
+if(filterEmail){
+
+query.email={
+$regex:filterEmail,
+$options:"i"
+};
+
+}
+
+if(city){
+
+query.city={
+$regex:city,
+$options:"i"
+};
+
+}
+
+if(instagram){
+
+query.instagramUsername={
+$regex:instagram,
+$options:"i"
+};
+
+}
+
+if(followers){
+
+query.followersRange={
+$regex:followers,
+$options:"i"
+};
+
+}
+
+if(category){
+
+query.preferredCategory={
+$in:[
+new RegExp(category,"i")
+]
+};
+}
+const creators = await Creator.find(query);
     payment.downloaded = true;
     payment.downloadedAt = new Date();
 
