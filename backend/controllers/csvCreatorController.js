@@ -1021,7 +1021,9 @@ if (phoneNumber?.trim()) {
 }
 
 if (gender) {
-  filter.gender = gender;
+  filter.gender = {
+    $in: gender.split(",").map(item => item.trim()),
+  };
 }
 
 if (dateOfBirth?.trim()) {
@@ -1042,61 +1044,94 @@ if (instagramUsername?.trim()) {
 }
 
 if (instagramFollowersRange) {
-  switch (instagramFollowersRange) {
-    case "Under 2K":
-      filter.exactFollowers = { $lt: 2000 };
-      break;
 
-    case "2K - 10K":
-      filter.exactFollowers = {
-        $gte: 2000,
-        $lt: 10000,
-      };
-      break;
+  const ranges = instagramFollowersRange
+    .split(",")
+    .map(item => item.trim());
 
-    case "10K - 50K":
-      filter.exactFollowers = {
-        $gte: 10000,
-        $lt: 50000,
-      };
-      break;
+  const conditions = [];
 
-    case "50K - 100K":
-      filter.exactFollowers = {
-        $gte: 50000,
-        $lt: 100000,
-      };
-      break;
+  ranges.forEach(range => {
 
-    case "100K - 500K":
-      filter.exactFollowers = {
-        $gte: 100000,
-        $lt: 500000,
-      };
-      break;
+    switch (range) {
 
-    case "500K - 1M":
-      filter.exactFollowers = {
-        $gte: 500000,
-        $lt: 1000000,
-      };
-      break;
+      case "Under 2K":
+        conditions.push({
+          exactFollowers: { $lt: 2000 }
+        });
+        break;
 
-    case "1M - 5M":
-      filter.exactFollowers = {
-        $gte: 1000000,
-        $lt: 5000000,
-      };
-      break;
+      case "2K - 10K":
+        conditions.push({
+          exactFollowers: {
+            $gte: 2000,
+            $lt: 10000,
+          }
+        });
+        break;
 
-    case "5M+":
-      filter.exactFollowers = {
-        $gte: 5000000,
-      };
-      break;
+      case "10K - 50K":
+        conditions.push({
+          exactFollowers: {
+            $gte: 10000,
+            $lt: 50000,
+          }
+        });
+        break;
+
+      case "50K - 100K":
+        conditions.push({
+          exactFollowers: {
+            $gte: 50000,
+            $lt: 100000,
+          }
+        });
+        break;
+
+      case "100K - 500K":
+        conditions.push({
+          exactFollowers: {
+            $gte: 100000,
+            $lt: 500000,
+          }
+        });
+        break;
+
+      case "500K - 1M":
+        conditions.push({
+          exactFollowers: {
+            $gte: 500000,
+            $lt: 1000000,
+          }
+        });
+        break;
+
+      case "1M - 5M":
+        conditions.push({
+          exactFollowers: {
+            $gte: 1000000,
+            $lt: 5000000,
+          }
+        });
+        break;
+
+      case "5M+":
+        conditions.push({
+          exactFollowers: {
+            $gte: 5000000,
+          }
+        });
+        break;
+
+    }
+
+  });
+
+  if (conditions.length > 0) {
+    filter.$or = conditions;
   }
-}
 
+}
 // Exact Followers Filter
 if (req.query.exactFollowers?.trim()) {
   filter.$expr = {
@@ -1114,7 +1149,7 @@ if (req.query.exactFollowers?.trim()) {
 
 if (categories) {
   filter.categories = {
-    $in: [categories],
+    $in: categories.split(",").map(item => item.trim()),
   };
 }
 
@@ -1130,13 +1165,27 @@ if (city?.trim()) {
 }
 
 if (state) {
-  filter.state = state;
+
+  const states = state.split(",").map(item => item.trim());
+
+  filter.$or = states.map(item => ({
+    state: {
+      $regex: `^${item}$`,
+      $options: "i"
+    }
+  }));
+
 }
 
 if (country) {
-  filter.country = country;
-}
 
+  const countries = country.split(",").map(item => item.trim());
+
+  filter.country = {
+    $in: countries
+  };
+
+}
 if (pincode?.trim()) {
   filter.pincode = {
     $regex: pincode.trim(),
@@ -1154,9 +1203,12 @@ if (youtubeUsername?.trim()) {
     $options: "i",
   };
 }
-
 if (youtubeSubscribersRange) {
-  filter.youtubeSubscribersRange = youtubeSubscribersRange;
+  filter.youtubeSubscribersRange = {
+    $in: youtubeSubscribersRange
+      .split(",")
+      .map(item => item.trim()),
+  };
 }
 
 // ==============================
@@ -1164,24 +1216,26 @@ if (youtubeSubscribersRange) {
 // ==============================
 
 if (typeOfCeleb) {
-  filter.typeOfCeleb = typeOfCeleb;
+  filter.typeOfCeleb = {
+    $in: typeOfCeleb.split(",").map(item => item.trim()),
+  };
 }
 
 // ==============================
 // PLATFORM
 // ==============================
-
 if (platform) {
-  filter.platform = platform;
+  filter.platform = {
+    $in: platform.split(",").map(item => item.trim()),
+  };
 }
 
 // ==============================
 // LANGUAGES
 // ==============================
-
 if (languages) {
   filter.languages = {
-    $in: [languages],
+    $in: languages.split(",").map(item => item.trim()),
   };
 }
 
@@ -1195,41 +1249,65 @@ if (req.query.InflunexaUserId) {
 // CAMPAIGN TYPE
 // ==============================
 
-if (campaignType?.trim()) {
+if (campaignType) {
   filter.campaignType = {
-    $in: [campaignType.trim()],
+    $in: campaignType.split(",").map(item => item.trim()),
   };
 }
+
 if (influencerType) {
 
-  switch (influencerType) {
+  const types = influencerType
+    .split(",")
+    .map(item => item.trim());
 
-    case "Nano Influencer":
-      filter.exactFollowers = {
-        $gte: 1000,
-        $lt: 10000,
-      };
-      break;
+  const conditions = [];
 
-    case "Micro Influencer":
-      filter.exactFollowers = {
-        $gte: 10000,
-        $lt: 100000,
-      };
-      break;
+  types.forEach(type => {
 
-    case "Macro Influencer":
-      filter.exactFollowers = {
-        $gte: 100000,
-        $lt: 1000000,
-      };
-      break;
+    switch (type) {
 
-    case "Mega Influencer":
-      filter.exactFollowers = {
-        $gte: 1000000,
-      };
-      break;
+      case "Nano Influencer":
+        conditions.push({
+          exactFollowers: {
+            $gte: 1000,
+            $lt: 10000,
+          }
+        });
+        break;
+
+      case "Micro Influencer":
+        conditions.push({
+          exactFollowers: {
+            $gte: 10000,
+            $lt: 100000,
+          }
+        });
+        break;
+
+      case "Macro Influencer":
+        conditions.push({
+          exactFollowers: {
+            $gte: 100000,
+            $lt: 1000000,
+          }
+        });
+        break;
+
+      case "Mega Influencer":
+        conditions.push({
+          exactFollowers: {
+            $gte: 1000000,
+          }
+        });
+        break;
+
+    }
+
+  });
+
+  if (conditions.length > 0) {
+    filter.$or = conditions;
   }
 
 }
