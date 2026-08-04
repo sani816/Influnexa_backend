@@ -1248,7 +1248,7 @@ if (contactStatus) {
   switch (contactStatus) {
 
     // Has mobile but no email
-    case "Mobile No.Only":
+    case   "Mobile Only":
       filter.$and = [
         {
           phoneNumber: {
