@@ -321,11 +321,10 @@ category,
 followers,
 instagram
 
-} = req.body.filterData || {};
+} = filterData
 
 let query = {};
 if(name){
-
 query.fullName={
 $regex:name,
 $options:"i"
@@ -360,13 +359,10 @@ $options:"i"
 
 }
 
-if(followers){
-
-query.followersRange={
-$regex:followers,
-$options:"i"
-};
-
+if (followers) {
+  query.followersRange = {
+    $gte: Number(followers),
+  };
 }
 
 if(category){
