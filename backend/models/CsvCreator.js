@@ -35,7 +35,11 @@ const csvCreatorSchema = new mongoose.Schema(
     gender: { type: String, default: "" },
 
     dateOfBirth: { type: String, default: "" },
-
+influencerType: {
+  type: String,
+  enum: ["Nano", "Micro", "Macro", "Mega"],
+  default: "Nano",
+},
     campaignType: {
       type: [String],
       default: [],

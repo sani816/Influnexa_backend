@@ -70,6 +70,30 @@ const cleanPhone = (value)=>{
     return phone;
 
 };
+
+
+const getInfluencerType = (followers) => {
+
+  followers = Number(followers) || 0;
+
+  if (followers >= 1000 && followers < 10000) {
+    return "Nano";
+  }
+
+  if (followers >= 10000 && followers < 100000) {
+    return "Micro";
+  }
+
+  if (followers >= 100000 && followers < 1000000) {
+    return "Macro";
+  }
+
+  if (followers >= 1000000) {
+    return "Mega";
+  }
+
+  return "";
+};
 // ==========================
 // UPLOAD CSV
 // ==========================
@@ -913,7 +937,7 @@ const {
 
   gender,
   dateOfBirth,
-
+ influencerType,
   campaignType,
   whatKindOfDealDoYouParticipateIn,
 whatAllPlatformsAreYouAvailableOn,
@@ -1176,8 +1200,39 @@ if (campaignType?.trim()) {
     $in: [campaignType.trim()],
   };
 }
+if (influencerType) {
 
+  switch (influencerType) {
 
+    case "Nano Influencer":
+      filter.exactFollowers = {
+        $gte: 1000,
+        $lt: 10000,
+      };
+      break;
+
+    case "Micro Influencer":
+      filter.exactFollowers = {
+        $gte: 10000,
+        $lt: 100000,
+      };
+      break;
+
+    case "Macro Influencer":
+      filter.exactFollowers = {
+        $gte: 100000,
+        $lt: 1000000,
+      };
+      break;
+
+    case "Mega Influencer":
+      filter.exactFollowers = {
+        $gte: 1000000,
+      };
+      break;
+  }
+
+}
 // DATABASE QUERY
 // =====================
 
