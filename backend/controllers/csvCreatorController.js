@@ -1239,46 +1239,68 @@ if (influencerType) {
 // CONTACT STATUS
 // ==============================
 
+// ==============================
+// CONTACT STATUS
+// ==============================
+
 if (contactStatus) {
 
   switch (contactStatus) {
 
-    case "Mobile No Only":
-      filter.phoneNumber = {
-        $exists: true,
-        $nin: ["", null]
-      };
-
-      filter.$or = [
-        { email: "" },
-        { email: null },
-        { email: { $exists: false } }
+    // Has mobile but no email
+    case "Mobile No.Only":
+      filter.$and = [
+        {
+          phoneNumber: {
+            $exists: true,
+            $nin: ["", null]
+          }
+        },
+        {
+          $or: [
+            { email: "" },
+            { email: null },
+            { email: { $exists: false } }
+          ]
+        }
       ];
       break;
 
+    // Has email but no mobile
     case "Email Only":
-      filter.email = {
-        $exists: true,
-        $nin: ["", null]
-      };
-
-      filter.$or = [
-        { phoneNumber: "" },
-        { phoneNumber: null },
-        { phoneNumber: { $exists: false } }
+      filter.$and = [
+        {
+          email: {
+            $exists: true,
+            $nin: ["", null]
+          }
+        },
+        {
+          $or: [
+            { phoneNumber: "" },
+            { phoneNumber: null },
+            { phoneNumber: { $exists: false } }
+          ]
+        }
       ];
       break;
 
+    // Has both
     case "Both Email & Mobile":
-      filter.email = {
-        $exists: true,
-        $nin: ["", null]
-      };
-
-      filter.phoneNumber = {
-        $exists: true,
-        $nin: ["", null]
-      };
+      filter.$and = [
+        {
+          email: {
+            $exists: true,
+            $nin: ["", null]
+          }
+        },
+        {
+          phoneNumber: {
+            $exists: true,
+            $nin: ["", null]
+          }
+        }
+      ];
       break;
   }
 
