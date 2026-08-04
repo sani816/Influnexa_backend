@@ -1349,3 +1349,63 @@ message:error.message
 
 
 };
+
+
+// GET DYNAMIC FILTER OPTIONS
+export const getCsvFilterOptions = async (req, res) => {
+  try {
+    const creators = await CsvCreator.find({}, {
+      gender: 1,
+      state: 1,
+      country: 1,
+      categories: 1,
+      languages: 1,
+      campaignType: 1,
+      typeOfCeleb: 1,
+      platform: 1,
+      youtubeSubscribersRange: 1,
+      instagramFollowersRange: 1,
+      _id: 0,
+    });
+
+    const unique = (arr) =>
+      [...new Set(arr.filter(v => v && String(v).trim() !== ""))].sort();
+
+    const options = {
+      gender: unique(creators.map(c => c.gender)),
+      state: unique(creators.map(c => c.state)),
+      country: unique(creators.map(c => c.country)),
+      typeOfCeleb: unique(creators.map(c => c.typeOfCeleb)),
+      platform: unique(creators.map(c => c.platform)),
+      youtubeSubscribersRange: unique(
+        creators.map(c => c.youtubeSubscribersRange)
+      ),
+      instagramFollowersRange: unique(
+        creators.map(c => c.instagramFollowersRange)
+      ),
+
+      categories: unique(
+        creators.flatMap(c => c.categories || [])
+      ),
+
+      languages: unique(
+        creators.flatMap(c => c.languages || [])
+      ),
+
+      campaignType: unique(
+        creators.flatMap(c => c.campaignType || [])
+      ),
+    };
+
+    res.json({
+      success: true,
+      options,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

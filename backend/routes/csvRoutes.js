@@ -54,6 +54,9 @@ router.delete(
   "/",
   deleteCSVCreators
 );
-
+router.get(
+  "/filter-options",
+  getCsvFilterOptions
+);
 
 export default router;
