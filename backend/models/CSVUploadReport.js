@@ -210,10 +210,7 @@ updatedRecords:{
           default: 0,
         },
 
-        anyMessageForUs: {
-          type: String,
-          default: "",
-        },
+       
 
         bio: {
           type: String,
@@ -260,7 +257,7 @@ updatedRecords:{
           default: "",
         },
 
-        hoboUserId: {
+        InflunexaUserId: {
           type: String,
           default: "",
         },

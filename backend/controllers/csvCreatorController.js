@@ -208,8 +208,6 @@ export const uploadCreatorsCSV = async (req, res) => {
               ]
             ) || 0,
 
-          anyMessageForUs:
-            row["Any message for us"] || "",
 
           bio:
             row["Bio"] || "",
@@ -244,8 +242,8 @@ export const uploadCreatorsCSV = async (req, res) => {
           fetchedDate:
             row["Fetched Date"] || "",
 
-          hoboUserId: String(
-  row["hoboUserId"] || ""
+          InflunexaUserId: String(
+  row["InflunexaUserId"] || ""
 ).trim(),
         });
       })
@@ -945,7 +943,6 @@ commercialsFor1DedicatedYouTubeShortsVideo,
 commercialsFor1IntegratedYouTubeShortsVideo,
 
 howManyAmazonReviewsYouDoPerMonth,
-anyMessageForUs,
 bio,
 
   areYouATvMoviesOttCelebrity,
@@ -957,7 +954,7 @@ bio,
   fetchedForBrand,
   fetchedDate,
 
-  hoboUserId,
+  InflunexaUserId,
 
 
 page=1,
@@ -1164,9 +1161,9 @@ if (languages) {
   };
 }
 
-if (req.query.hoboUserId) {
-  filter.hoboUserId = {
-    $regex: "^" + req.query.hoboUserId,
+if (req.query.InflunexaUserId) {
+  filter.InflunexaUserId = {
+    $regex: "^" + req.query.InflunexaUserId,
     $options: "i"
   };
 }

@@ -143,11 +143,6 @@ const csvCreatorSchema = new mongoose.Schema(
       default: 0,
     },
 
-    anyMessageForUs: {
-      type: String,
-      default: "",
-    },
-
     bio: {
       type: String,
       default: "",
@@ -193,7 +188,7 @@ const csvCreatorSchema = new mongoose.Schema(
       default: "",
     },
 
-    hoboUserId: {
+    InflunexaUserId: {
   type: String,
   default: "",
 },
