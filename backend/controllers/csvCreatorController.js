@@ -1057,91 +1057,28 @@ if (instagramUsername?.trim()) {
 
 if (instagramFollowersRange) {
 
-  const ranges = instagramFollowersRange
+  const conditions = instagramFollowersRange
     .split(",")
-    .map(item => item.trim());
+    .map(range => {
 
-  const conditions = [];
+      const [min, max] = range.split("-").map(Number);
 
-  ranges.forEach(range => {
+      if (isNaN(min)) return null;
 
-    switch (range) {
+      return {
+        instagramFollowersRange: {
+          $gte: min,
+          ...(max ? { $lte: max } : {})
+        }
+      };
 
-      case "Under 2K":
-        conditions.push({
-          instagramFollowersRange: {
-            $lt: 2000
-          }
-        });
-        break;
-
-      case "2K - 10K":
-        conditions.push({
-          instagramFollowersRange: {
-            $gte: 2000,
-            $lt: 10000
-          }
-        });
-        break;
-
-      case "10K - 50K":
-        conditions.push({
-          instagramFollowersRange: {
-            $gte: 10000,
-            $lt: 50000
-          }
-        });
-        break;
-
-      case "50K - 100K":
-        conditions.push({
-          instagramFollowersRange: {
-            $gte: 50000,
-            $lt: 100000
-          }
-        });
-        break;
-
-      case "100K - 500K":
-        conditions.push({
-          instagramFollowersRange: {
-            $gte: 100000,
-            $lt: 500000
-          }
-        });
-        break;
-
-      case "500K - 1M":
-        conditions.push({
-          instagramFollowersRange: {
-            $gte: 500000,
-            $lt: 1000000
-          }
-        });
-        break;
-
-      case "1M - 5M":
-        conditions.push({
-          instagramFollowersRange: {
-            $gte: 1000000,
-            $lt: 5000000
-          }
-        });
-        break;
-
-      case "5M+":
-        conditions.push({
-          instagramFollowersRange: {
-            $gte: 5000000
-          }
-        });
-        break;
-    }
-  });
+    })
+    .filter(Boolean);
 
   if (conditions.length) {
     filter.$or = conditions;
   }
+
 }
 // Exact Followers Filter
 if (req.query.exactFollowers?.trim()) {
