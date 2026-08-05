@@ -196,10 +196,23 @@ influencerType: {
   type: String,
   default: "",
 },
+
+updatedBy: {
+  type: String,
+  default: "",
+},
+
+updatedAt: {
+  type: Date,
+  default: Date.now,
+},
   },
   {
     timestamps: true,
   }
+
+
+  
 );
 
 
