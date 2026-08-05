@@ -118,6 +118,15 @@ export const uploadCreatorsCSV = async (req, res) => {
     header.replace(/^\uFEFF/, "").trim()
 }))
       .on("data", (row) => {
+        const exactFollowers =
+  Number(
+    String(row["Exact Followers"] || "0").replace(/,/g, "")
+  ) || 0;
+
+const instagramFollowersRange =
+  exactFollowers > 0 ? String(exactFollowers) : "";
+
+  
         creators.push({
           timestamp: row["Timestamp"] || "",
 
@@ -125,13 +134,10 @@ export const uploadCreatorsCSV = async (req, res) => {
 
           instagramProfileLink: row["Instagram Profile Link"] || "",
 
-          instagramFollowersRange:
-            row["Instagram Followers Range"] || "",
+          instagramFollowersRange,
+            
 
-          exactFollowers:
-            Number(
-              String(row["Exact Followers"] || "0").replace(/,/g, "")
-            ) || 0,
+          exactFollowers,
 
           categories: row["Categories"]
             ? row["Categories"]
