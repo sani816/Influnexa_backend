@@ -1399,9 +1399,6 @@ export const getCsvFilterOptions = async (req, res) => {
       youtubeSubscribersRange: unique(
         creators.map(c => c.youtubeSubscribersRange)
       ),
-      instagramFollowersRange: unique(
-        creators.map(c => c.instagramFollowersRange)
-      ),
 
       categories: unique(
         creators.flatMap(c => c.categories || [])
