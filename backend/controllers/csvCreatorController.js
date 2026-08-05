@@ -994,7 +994,7 @@ limit=100
 // ==============================
 
 const filter = {};
-
+const andConditions = [];
 // ==============================
 // PERSONAL DETAILS
 // ==============================
@@ -1165,16 +1165,11 @@ if (city?.trim()) {
 }
 
 if (state) {
-
-  const states = state.split(",").map(item => item.trim());
-
-  filter.$in = states.map(item => ({
-    state: {
-      $regex: `^${item}$`,
-      $options: "i"
-    }
-  }));
-
+    andConditions.push({
+        state: {
+            $in: state.split(",").map(s => s.trim())
+        }
+    });
 }
 
 if (country) {
