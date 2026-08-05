@@ -278,9 +278,8 @@ if (!instagramFollowersRange && exactFollowers > 0)  {
           fetchedDate:
             row["Fetched Date"] || "",
 
-          InflunexaUserId: Number(
-  row["InflunexaUserId"] || ""
-).trim(),
+          InflunexaUserId: Number(row["InflunexaUserId"]) || null,
+
         });
       })
 
