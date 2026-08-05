@@ -1383,7 +1383,6 @@ export const getCsvFilterOptions = async (req, res) => {
       typeOfCeleb: 1,
       platform: 1,
       youtubeSubscribersRange: 1,
-      instagramFollowersRange: 1,
       _id: 0,
     });
 
