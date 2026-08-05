@@ -128,7 +128,7 @@ let instagramFollowersRange =
     String(row["Instagram Followers Range"] || "0").replace(/,/g, "")
   ) || 0;
 
-if (instagramFollowersRange === 0) {
+if (!instagramFollowersRange && exactFollowers > 0)  {
   instagramFollowersRange = exactFollowers;
 }
 
@@ -1136,9 +1136,7 @@ if (instagramFollowersRange) {
           }
         });
         break;
-
     }
-
   });
 
   if (conditions.length) {
