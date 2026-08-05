@@ -118,15 +118,21 @@ export const uploadCreatorsCSV = async (req, res) => {
     header.replace(/^\uFEFF/, "").trim()
 }))
       .on("data", (row) => {
-        const exactFollowers =
+       const exactFollowers =
   Number(
     String(row["Exact Followers"] || "0").replace(/,/g, "")
   ) || 0;
 
-const instagramFollowersRange =
-  exactFollowers > 0 ? String(exactFollowers) : "";
+let instagramFollowersRange =
+  Number(
+    String(row["Instagram Followers Range"] || "0").replace(/,/g, "")
+  ) || 0;
 
-  
+if (instagramFollowersRange === 0) {
+  instagramFollowersRange = exactFollowers;
+}
+
+
         creators.push({
           timestamp: row["Timestamp"] || "",
 
@@ -1063,68 +1069,70 @@ if (instagramFollowersRange) {
 
       case "Under 2K":
         conditions.push({
-          exactFollowers: { $lt: 2000 }
+          instagramFollowersRange: {
+            $lt: 2000
+          }
         });
         break;
 
       case "2K - 10K":
         conditions.push({
-          exactFollowers: {
+          instagramFollowersRange: {
             $gte: 2000,
-            $lt: 10000,
+            $lt: 10000
           }
         });
         break;
 
       case "10K - 50K":
         conditions.push({
-          exactFollowers: {
+          instagramFollowersRange: {
             $gte: 10000,
-            $lt: 50000,
+            $lt: 50000
           }
         });
         break;
 
       case "50K - 100K":
         conditions.push({
-          exactFollowers: {
+          instagramFollowersRange: {
             $gte: 50000,
-            $lt: 100000,
+            $lt: 100000
           }
         });
         break;
 
       case "100K - 500K":
         conditions.push({
-          exactFollowers: {
+          instagramFollowersRange: {
             $gte: 100000,
-            $lt: 500000,
+            $lt: 500000
           }
         });
         break;
 
       case "500K - 1M":
         conditions.push({
-          exactFollowers: {
+          instagramFollowersRange: {
             $gte: 500000,
-            $lt: 1000000,
+            $lt: 1000000
           }
         });
         break;
 
       case "1M - 5M":
         conditions.push({
-          exactFollowers: {
+          instagramFollowersRange: {
             $gte: 1000000,
-            $lt: 5000000,
+            $lt: 5000000
           }
         });
         break;
 
       case "5M+":
         conditions.push({
-          exactFollowers: {
-            $gte: 5000000,
+          instagramFollowersRange: {
+            $gte: 5000000
           }
         });
         break;
@@ -1133,10 +1141,9 @@ if (instagramFollowersRange) {
 
   });
 
-  if (conditions.length > 0) {
+  if (conditions.length) {
     filter.$or = conditions;
   }
-
 }
 // Exact Followers Filter
 if (req.query.exactFollowers?.trim()) {
