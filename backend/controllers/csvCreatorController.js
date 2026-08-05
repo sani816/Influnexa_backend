@@ -1165,16 +1165,9 @@ if (city?.trim()) {
 }
 
 if (state) {
-
-  const states = state.split(",").map(item => item.trim());
-
-  filter.$in = states.map(item => ({
-    state: {
-      $regex: `^${item}$`,
-      $options: "i"
-    }
-  }));
-
+  filter.state = {
+    $in: state.split(",").map(item => item.trim()),
+  };
 }
 
 if (country) {
