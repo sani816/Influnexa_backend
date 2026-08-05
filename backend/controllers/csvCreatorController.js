@@ -1020,11 +1020,11 @@ if (phoneNumber?.trim()) {
   };
 }
 
-filter.gender = {
-    $in: gender
-      .split(",")
-      .map(item => new RegExp(`^${item.trim()}$`, "i"))
-};
+if (gender) {
+  filter.gender = {
+    $in: gender.split(",").map(item => item.trim()),
+  };
+}
 
 if (dateOfBirth?.trim()) {
   filter.dateOfBirth = {
@@ -1166,19 +1166,26 @@ if (city?.trim()) {
 
 if (state) {
 
-  const states = state
-    .split(",")
-    .map(item => item.trim());
+  const states = state.split(",").map(item => item.trim());
 
-  filter.state = {
-    $in: states.map(s => new RegExp(`^${s}$`, "i"))
+  filter.$in = states.map(item => ({
+    state: {
+      $regex: `^${item}$`,
+      $options: "i"
+    }
+  }));
+
+}
+
+if (country) {
+
+  const countries = country.split(",").map(item => item.trim());
+
+  filter.country = {
+    $in: countries
   };
 
 }
-filter.country = {
-    $in: countries.map(c => new RegExp(`^${c}$`, "i"))
-};
-
 if (pincode?.trim()) {
   filter.pincode = {
     $regex: pincode.trim(),
@@ -1208,29 +1215,29 @@ if (youtubeSubscribersRange) {
 // CELEBRITY
 // ==============================
 
-filter.typeOfCeleb = {
-    $in: typeOfCeleb
-        .split(",")
-        .map(item => new RegExp(`^${item.trim()}$`, "i"))
-};
+if (typeOfCeleb) {
+  filter.typeOfCeleb = {
+    $in: typeOfCeleb.split(",").map(item => item.trim()),
+  };
+}
 
 // ==============================
 // PLATFORM
 // ==============================
-filter.platform = {
-    $in: platform
-        .split(",")
-        .map(item => new RegExp(`^${item.trim()}$`, "i"))
-};
+if (platform) {
+  filter.platform = {
+    $in: platform.split(",").map(item => item.trim()),
+  };
+}
 
 // ==============================
 // LANGUAGES
 // ==============================
-filter.languages = {
-    $in: languages
-        .split(",")
-        .map(item => item.trim())
-};
+if (languages) {
+  filter.languages = {
+    $in: languages.split(",").map(item => item.trim()),
+  };
+}
 
 if (req.query.InflunexaUserId) {
   filter.InflunexaUserId = {
@@ -1305,6 +1312,10 @@ if (influencerType) {
 
 }
 
+
+// ==============================
+// CONTACT STATUS
+// ==============================
 
 // ==============================
 // CONTACT STATUS
