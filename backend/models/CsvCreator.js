@@ -193,7 +193,7 @@ influencerType: {
     },
 
     InflunexaUserId: {
-  type: String,
+  type: Number,
   default: "",
 },
 

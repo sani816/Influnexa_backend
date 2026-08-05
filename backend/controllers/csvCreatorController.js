@@ -278,7 +278,7 @@ if (!instagramFollowersRange && exactFollowers > 0)  {
           fetchedDate:
             row["Fetched Date"] || "",
 
-          InflunexaUserId: String(
+          InflunexaUserId: Number(
   row["InflunexaUserId"] || ""
 ).trim(),
         });
@@ -1181,9 +1181,11 @@ if (languages) {
 }
 
 if (req.query.InflunexaUserId) {
-  filter.InflunexaUserId = {
-    $regex: "^" + req.query.InflunexaUserId,
-    $options: "i"
+  filter.$expr = {
+    $regexMatch: {
+      input: { $toString: "$InflunexaUserId" },
+      regex: "^" + req.query.InflunexaUserId,
+    },
   };
 }
 // ==============================
