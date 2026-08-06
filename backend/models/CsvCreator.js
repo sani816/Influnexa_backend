@@ -198,7 +198,7 @@ influencerType: {
 },
 
 editedManually: {
-  type: string,
+  type: String,
   default:"",
 },
 
