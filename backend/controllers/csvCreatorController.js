@@ -71,6 +71,20 @@ const cleanPhone = (value)=>{
 
 };
 
+const getInstagramFollowersRange = (followers) => {
+  followers = Number(followers) || 0;
+
+  if (followers < 1000) return "Under 1K";
+  if (followers < 10000) return "1K - 10K";
+  if (followers < 50000) return "10K - 50K";
+  if (followers < 100000) return "50K - 100K";
+  if (followers < 500000) return "100K - 500K";
+  if (followers < 1000000) return "500K - 1M";
+  if (followers < 5000000) return "1M - 5M";
+
+  return "5M+";
+};
+
 
 const getInfluencerType = (followers) => {
 
@@ -123,15 +137,17 @@ export const uploadCreatorsCSV = async (req, res) => {
     String(row["Exact Followers"] || "0").replace(/,/g, "")
   ) || 0;
 
-let instagramFollowersRange =
+let instagramFollowers =
   Number(
     String(row["Instagram Followers Range"] || "0").replace(/,/g, "")
   ) || 0;
 
-if (!instagramFollowersRange && exactFollowers > 0)  {
-  instagramFollowersRange = exactFollowers;
+if (!instagramFollowers && exactFollowers > 0) {
+  instagramFollowers = exactFollowers;
 }
 
+const instagramFollowersRange =
+  getInstagramFollowersRange(instagramFollowers);
 
         creators.push({
           timestamp: row["Timestamp"] || "",
