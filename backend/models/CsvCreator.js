@@ -8,7 +8,10 @@ const csvCreatorSchema = new mongoose.Schema(
 
     instagramProfileLink: { type: String, default: "" },
 
-    instagramFollowersRange: { type: Number, default: "" },
+    instagramFollowersRange: {
+  type: String,
+  default: "",
+},
 
     exactFollowers: { type: Number, default: 0 },
 
