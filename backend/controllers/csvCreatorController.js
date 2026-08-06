@@ -751,7 +751,11 @@ export const updateCsvCreator = async (req, res) => {
 
     const updatedCreator = await CsvCreator.findByIdAndUpdate(
       req.params.id,
-      req.body,
+    {
+      ...req.body,
+      editedManually: true,
+        updatedAt: new Date(),
+    },
       {
         new:true
       }
