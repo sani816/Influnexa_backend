@@ -72,7 +72,17 @@ const cleanPhone = (value)=>{
 };
 
 const getInstagramFollowersRange = (followers) => {
-  followers = Number(followers) || 0;
+
+  if (
+    followers === null ||
+    followers === undefined ||
+    followers === "" ||
+    Number(followers) <= 0
+  ) {
+    return "";
+  }
+
+  followers = Number(followers);
 
   if (followers < 1000) return "Under 1K";
   if (followers < 10000) return "1K - 10K";
@@ -135,7 +145,7 @@ export const uploadCreatorsCSV = async (req, res) => {
        const exactFollowers =
   Number(
     String(row["Exact Followers"] || "0").replace(/,/g, "")
-  ) || 0;
+  );
 
 let instagramFollowers =
   Number(
