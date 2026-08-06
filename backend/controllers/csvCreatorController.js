@@ -162,7 +162,7 @@ if (!instagramFollowersRange && exactFollowers > 0)  {
           gender: row["Gender"] || "",
 
           dateOfBirth: row["Date of Birth"] || "",
-
+           influencerType,
           campaignType: row["Campaign type"]
             ? row["Campaign type"]
                 .split(",")

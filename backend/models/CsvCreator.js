@@ -38,7 +38,7 @@ const csvCreatorSchema = new mongoose.Schema(
 influencerType: {
   type: String,
   enum: ["Nano", "Micro", "Macro", "Mega"],
-  default: "Nano",
+  default: "",
 },
     campaignType: {
       type: [String],
