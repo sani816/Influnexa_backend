@@ -197,7 +197,7 @@ influencerType: {
   default: "",
 },
 
-editedManually: {
+editStatus: {
   type: String,
   default:"",
 },
