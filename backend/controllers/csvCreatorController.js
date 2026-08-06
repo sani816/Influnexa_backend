@@ -1084,29 +1084,11 @@ if (instagramUsername?.trim()) {
 }
 
 if (instagramFollowersRange) {
-
-  const conditions = instagramFollowersRange
-    .split(",")
-    .map(range => {
-
-      const [min, max] = range.split("-").map(Number);
-
-      if (isNaN(min)) return null;
-
-      return {
-        instagramFollowersRange: {
-          $gte: min,
-          ...(max ? { $lte: max } : {})
-        }
-      };
-
-    })
-    .filter(Boolean);
-
-  if (conditions.length) {
-    filter.$or = conditions;
-  }
-
+  filter.instagramFollowersRange = {
+    $in: instagramFollowersRange
+      .split(",")
+      .map(item => item.trim())
+  };
 }
 // Exact Followers Filter
 if (req.query.exactFollowers?.trim()) {
