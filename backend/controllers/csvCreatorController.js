@@ -92,7 +92,7 @@ const getInfluencerType = (followers) => {
     return "Mega Influencer";
   }
 
-  return "";
+  return "Nano Influencer";
 };
 // ==========================
 // UPLOAD CSV
