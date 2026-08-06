@@ -753,7 +753,7 @@ export const updateCsvCreator = async (req, res) => {
       req.params.id,
     {
       ...req.body,
-      editedManually: true,
+      editStatus: "Edited Manually",
         updatedAt: new Date(),
     },
       {

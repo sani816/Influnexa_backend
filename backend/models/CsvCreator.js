@@ -198,8 +198,8 @@ influencerType: {
 },
 
 editedManually: {
-  type: Boolean,
-  default: false,
+  type: string,
+  default:"",
 },
 
 updatedBy: {
