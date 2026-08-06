@@ -77,19 +77,19 @@ const getInfluencerType = (followers) => {
   followers = Number(followers) || 0;
 
   if (followers >= 1000 && followers < 10000) {
-    return "Nano";
+    return "Nano Influencer";
   }
 
   if (followers >= 10000 && followers < 100000) {
-    return "Micro";
+    return "Micro Influencer";
   }
 
   if (followers >= 100000 && followers < 1000000) {
-    return "Macro";
+    return "Macro Influencer";
   }
 
   if (followers >= 1000000) {
-    return "Mega";
+    return "Mega Influencer";
   }
 
   return "";
@@ -162,7 +162,7 @@ if (!instagramFollowersRange && exactFollowers > 0)  {
           gender: row["Gender"] || "",
 
           dateOfBirth: row["Date of Birth"] || "",
-           influencerType,
+            influencerType: getInfluencerType(exactFollowers),
           campaignType: row["Campaign type"]
             ? row["Campaign type"]
                 .split(",")
@@ -467,7 +467,6 @@ const compareFields=[
 "exactFollowers",
 
 "categories",
-
 "youtubeUsername",
 
 "youtubeChannelLink",
