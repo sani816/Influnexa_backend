@@ -1333,6 +1333,28 @@ if (contactStatus) {
 // DATABASE QUERY
 // =====================
 
+// Count total matching records
+const total = await CsvCreator.countDocuments(filter);
+
+// ===============================
+// DOWNLOAD ALL FILTERED DATA
+// ===============================
+if (req.query.download === "true") {
+
+  const creators = await CsvCreator.find(filter)
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json({
+    success: true,
+    total,
+    data: creators,
+  });
+
+}
+
+// ===============================
+// PAGINATION
+// ===============================
 const pageNumber = parseInt(page, 10) || 1;
 const limitNumber = parseInt(limit, 10) || 100;
 
@@ -1343,9 +1365,7 @@ const creators = await CsvCreator.find(filter)
   .skip(skip)
   .limit(limitNumber);
 
-const total = await CsvCreator.countDocuments(filter);
-
-res.status(200).json({
+return res.status(200).json({
   success: true,
   total,
   page: pageNumber,
@@ -1353,7 +1373,6 @@ res.status(200).json({
   totalPages: Math.ceil(total / limitNumber),
   data: creators,
 });
-
 
 
 }
