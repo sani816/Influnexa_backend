@@ -1067,10 +1067,9 @@ if (gender) {
 }
 
 if (dateOfBirth?.trim()) {
-  filter.dateOfBirth = {
-    $regex: dateOfBirth.trim(),
-    $options: "i",
-  };
+  const [year, month, day] = dateOfBirth.split("-");
+
+  filter.dateOfBirth = `${day}-${month}-${year}`;
 }
 // ==============================
 // INSTAGRAM
